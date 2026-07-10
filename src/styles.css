@@ -746,6 +746,10 @@ a {
   outline-color: var(--color-kumo-focus);
 }
 
+@utility ring-kumo-base {
+  --tw-ring-color: var(--color-kumo-base);
+}
+
 @utility ring-kumo-brand {
   --tw-ring-color: var(--color-kumo-brand);
 }
