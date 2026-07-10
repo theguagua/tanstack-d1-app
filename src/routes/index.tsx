@@ -1,222 +1,151 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState, useEffect } from 'react';
-import { Plus, Check, Calendar, ListTodo, Trash2, Edit2, X, Save } from 'lucide-react';
+import updatesData from '../../data/updates.json';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
+type CommitItem = {
+  sha: string;
+  pr: string | null;
+  title: string;
+  summary: string;
+  author: string;
+  files: number;
+  additions: number;
+  deletions: number;
+};
+
+type DayUpdate = {
+  count: number;
+  prs: (string | null)[];
+  commits: CommitItem[];
+};
+
+const data = updatesData as {
+  meta: {
+    source: string;
+    monitoring_since: string;
+    last_sync: string;
+    total_commits: number;
+    generated_by: string;
+  };
+  updates: Record<string, DayUpdate>;
+};
+
+const dates = Object.keys(data.updates);
+
 function HomePage() {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [newTask, setNewTask] = useState({ title: '', description: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingTask, setEditingTask] = useState<any>(null);
-  const [editForm, setEditForm] = useState({ title: '', description: '' });
-
-  const loadTasks = async () => {
-    try {
-      const response = await fetch('/api/tasks');
-      const data = await response.json();
-      setTasks(data.tasks || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      const form = new FormData();
-      form.append('title', newTask.title);
-      form.append('description', newTask.description);
-      
-      const response = await fetch('/api/tasks', { method: 'POST', body: form });
-      const result = await response.json();
-      
-      if (response.ok) {
-        setNewTask({ title: '', description: '' });
-        await loadTasks();
-      } else {
-        alert('Error: ' + JSON.stringify(result));
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleToggleComplete = async (taskId: number, completed: boolean) => {
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: taskId, completed: !completed }),
-      });
-      if (response.ok) {
-        await loadTasks();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleDelete = async (taskId: number) => {
-    if (!confirm('确定要删除这个任务吗？')) return;
-    
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: taskId }),
-      });
-      if (response.ok) {
-        await loadTasks();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const startEdit = (task: any) => {
-    setEditingTask(task);
-    setEditForm({ title: task.title, description: task.description || '' });
-  };
-
-  const cancelEdit = () => {
-    setEditingTask(null);
-    setEditForm({ title: '', description: '' });
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingTask) return;
-    
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: editingTask.id,
-          title: editForm.title,
-          description: editForm.description,
-        }),
-      });
-      
-      if (response.ok) {
-        setEditingTask(null);
-        await loadTasks();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
-    <main className="page-wrap px-4 pb-8 pt-4">
-      <section className="island-shell rise-in relative overflow-hidden rounded-[1.5rem] px-5 py-8 sm:px-8 sm:py-10">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-10 w-10 rounded-xl bg-[var(--lagoon-deep)] flex items-center justify-center">
-            <ListTodo className="w-5 h-5 text-white" />
+    <main className="page-wrap px-4 pb-12 pt-6">
+      {/* 顶部状态条 */}
+      <section className="island-shell rise-in relative overflow-hidden rounded-[1.5rem] px-5 py-7 sm:px-8 sm:py-8">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="h-10 w-10 rounded-xl bg-[var(--lagoon-deep)] flex items-center justify-center text-lg">
+            📊
           </div>
-          <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)]">任务管理</h1>
+          <div>
+            <h1 className="display-title text-2xl font-bold text-[var(--sea-ink)] m-0">
+              Tableau MCP · 每日更新面板
+            </h1>
+            <p className="island-kicker m-0 mt-0.5">
+              数据源 {' '}
+              <a
+                href={`https://${data.meta.source}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--lagoon-deep)] no-underline"
+              >
+                {data.meta.source}
+              </a>{' '}
+              · 部署 Cloudflare (Git 集成)
+            </p>
+          </div>
         </div>
-        
-        <form onSubmit={handleSubmit} className="mb-6 space-y-3">
-          <input
-            type="text"
-            placeholder="任务标题..."
-            value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-            className="w-full rounded-lg border border-[rgba(50,143,151,0.3)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--lagoon-deep)] text-base"
-            required
-          />
-          <textarea
-            placeholder="描述（可选）"
-            value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-            className="w-full rounded-lg border border-[rgba(50,143,151,0.3)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--lagoon-deep)] text-base"
-            rows={2}
-          />
-          <button type="submit" disabled={isSubmitting} className="rounded-full bg-[var(--lagoon-deep)] px-5 py-2 text-white font-medium disabled:opacity-50 text-sm">
-            <Plus className="inline-block w-4 h-4 mr-1" />添加
-          </button>
-        </form>
-        
-        <div className="space-y-2">
-          {tasks.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-3">📝</div>
-              <p className="text-[var(--sea-ink-soft)]">暂无任务</p>
-              <p className="text-sm text-[var(--sea-ink-soft)] mt-1">添加第一个任务开始吧</p>
-            </div>
-          ) : (
-            tasks.map(task => (
-              <div key={task.id} className="flex gap-3 p-3 rounded-lg border border-[rgba(50,143,151,0.2)] items-start">
-                <button 
-                  onClick={() => handleToggleComplete(task.id, task.completed)}
-                  className="mt-0.5 text-[var(--sea-ink-soft)] cursor-pointer"
-                >
-                  {task.completed ? <Check className="w-5 h-5 text-green-600" /> : <span className="block w-5 h-5 border border-[var(--sea-ink-soft)] rounded-full" />}
-                </button>
-                <div className="flex-1 min-w-0">
-                  {editingTask?.id === task.id ? (
-                    <form onSubmit={handleUpdate} className="space-y-2">
-                      <input
-                        type="text"
-                        value={editForm.title}
-                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                        className="w-full rounded-lg border border-[rgba(50,143,151,0.3)] px-3 py-1.5 text-base"
-                        required
-                      />
-                      <textarea
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                        className="w-full rounded-lg border border-[rgba(50,143,151,0.3)] px-3 py-1.5 text-base"
-                        rows={2}
-                      />
-                      <div className="flex gap-2">
-                        <button type="submit" className="rounded bg-[var(--lagoon-deep)] px-3 py-1 text-white text-xs">
-                          <Save className="inline-block w-3 h-3 mr-1" />保存
-                        </button>
-                        <button type="button" onClick={cancelEdit} className="rounded bg-gray-200 px-3 py-1 text-xs">
-                          <X className="inline-block w-3 h-3 mr-1" />取消
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <h3 className={`font-medium text-base ${task.completed ? 'line-through text-[var(--sea-ink-soft)]' : 'text-[var(--sea-ink)]'}`}>{task.title}</h3>
-                      {task.description && <p className="text-sm text-[var(--sea-ink-soft)] mt-1 break-words">{task.description}</p>}
-                      {task.due_date && (
-                        <div className="flex items-center gap-1 mt-2 text-xs text-[var(--sea-ink-soft)]">
-                          <Calendar className="w-3 h-3" />{task.due_date}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-                {editingTask?.id !== task.id && (
-                  <div className="flex gap-1">
-                    <button onClick={() => startEdit(task)} className="p-1 text-[var(--sea-ink-soft)] hover:text-[var(--lagoon-deep)]">
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => handleDelete(task.id)} className="p-1 text-red-500 hover:text-red-700">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
+
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--sea-ink-soft)]">
+          <span>
+            监控起点 <b className="text-[var(--sea-ink)]">{data.meta.monitoring_since}</b>
+          </span>
+          <span>
+            最后同步 <b className="text-[var(--sea-ink)]">{data.meta.last_sync}</b>
+          </span>
+          <span>
+            累计 commit <b className="text-[var(--sea-ink)]">{data.meta.total_commits}</b>
+          </span>
+          <span>
+            有更新日 <b className="text-[var(--sea-ink)]">{dates.length}</b>
+          </span>
         </div>
       </section>
+
+      {/* 每日快照 */}
+      <div className="mt-8 space-y-10">
+        {dates.map((date) => {
+          const day = data.updates[date];
+          return (
+            <section key={date}>
+              <div className="flex items-baseline gap-3 mb-4">
+                <h2 className="text-xl font-bold text-[var(--sea-ink)] m-0">{date}</h2>
+                <span className="island-kicker">
+                  今日 {day.count} 条
+                  {day.prs.filter(Boolean).length > 0 && (
+                    <span className="ml-2 text-[var(--sea-ink-soft)]">
+                      #{day.prs.filter(Boolean).join(' #')}
+                    </span>
+                  )}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {day.commits.map((c) => (
+                  <article
+                    key={c.sha}
+                    className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-5 py-4 backdrop-blur-sm"
+                  >
+                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                      {c.pr ? (
+                        <span className="rounded-full bg-[var(--lagoon-deep)]/12 px-2.5 py-0.5 text-xs font-semibold text-[var(--lagoon-deep)]">
+                          #{c.pr}
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-[var(--line)] px-2.5 py-0.5 text-xs font-semibold text-[var(--sea-ink-soft)]">
+                          commit
+                        </span>
+                      )}
+                      <code className="text-xs text-[var(--sea-ink-soft)]">{c.sha}</code>
+                      <span className="text-xs text-[var(--sea-ink-soft)]">· {c.author}</span>
+                    </div>
+
+                    <p className="m-0 text-[15px] leading-relaxed text-[var(--sea-ink)]">
+                      {c.summary}
+                    </p>
+
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-xs text-[var(--lagoon-deep)] select-none">
+                        原文标题
+                      </summary>
+                      <p className="mt-1 text-xs text-[var(--sea-ink-soft)] break-words">
+                        {c.title}
+                      </p>
+                    </details>
+
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--sea-ink-soft)]">
+                      <span>{c.files} 文件</span>
+                      <span className="text-green-600">+{c.additions}</span>
+                      <span className="text-red-500">−{c.deletions}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
+      <p className="mt-12 text-center text-xs text-[var(--sea-ink-soft)]">
+        ℹ️ 每日 07:00 抓取 / 07:15 总结并部署 · 仅展示最近 5 commits（历史日归档于上方）· 无更新不部署
+      </p>
     </main>
   );
 }
