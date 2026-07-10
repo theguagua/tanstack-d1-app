@@ -1,17 +1,10 @@
-import { serveStatic } from '@cloudflare/kv-asset-handler';
-import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server';
-
-const handler = createStartHandler(defaultStreamHandler);
+/// <reference types="@cloudflare/workers-types" />
+import handler from './dist/server/server.js';
 
 export default {
-  async fetch(request, env, ctx) {
-    // Inject D1 binding into globalThis for TanStack Start server handlers
+  fetch: (request, env) => {
     globalThis.DB = env.DB;
-    
-    try {
-      return await handler(request);
-    } catch (e) {
-      return new Response(`Error: ${e}`, { status: 500 });
-    }
+    globalThis.R2_BUCKET = env.R2_BUCKET;
+    return handler.fetch(request);
   },
 } satisfies ExportedHandler;

@@ -4,15 +4,13 @@ export const Route = createFileRoute('/api/image/$key')({
   server: {
     handlers: ({ createHandlers }) =>
       createHandlers({
-        GET: async ({ params }) => {
+        GET: async ({ params, context }) => {
           try {
-            // @ts-ignore - R2 binding injected by worker.ts
             const r2 = globalThis.R2_BUCKET as R2Bucket | undefined;
             
-            if (!r2) return new Response('R2 bucket unavailable', { status: 500 });
+            if (!r2) return new Response('R2 unavailable', { status: 500 });
             
-            const key = decodeURIComponent(params.key);
-            const object = await r2.get(key);
+            const object = await r2.get(params.key);
             
             if (!object) return new Response('Not found', { status: 404 });
             

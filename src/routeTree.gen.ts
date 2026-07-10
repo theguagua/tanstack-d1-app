@@ -9,13 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ApiTasksRouteImport } from './routes/api/tasks'
 import { Route as ApiImageKeyRouteImport } from './routes/api/image.$key'
 
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTasksRoute = ApiTasksRouteImport.update({
@@ -31,41 +43,69 @@ const ApiImageKeyRoute = ApiImageKeyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/api/tasks': typeof ApiTasksRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/image/$key': typeof ApiImageKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/api/tasks': typeof ApiTasksRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/image/$key': typeof ApiImageKeyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/api/tasks': typeof ApiTasksRoute
+  '/api/upload': typeof ApiUploadRoute
   '/api/image/$key': typeof ApiImageKeyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/tasks' | '/api/image/$key'
+  fullPaths: '/' | '/about' | '/api/tasks' | '/api/upload' | '/api/image/$key'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/tasks' | '/api/image/$key'
-  id: '__root__' | '/' | '/api/tasks' | '/api/image/$key'
+  to: '/' | '/about' | '/api/tasks' | '/api/upload' | '/api/image/$key'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/api/tasks'
+    | '/api/upload'
+    | '/api/image/$key'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   ApiTasksRoute: typeof ApiTasksRoute
+  ApiUploadRoute: typeof ApiUploadRoute
   ApiImageKeyRoute: typeof ApiImageKeyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/tasks': {
@@ -87,7 +127,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   ApiTasksRoute: ApiTasksRoute,
+  ApiUploadRoute: ApiUploadRoute,
   ApiImageKeyRoute: ApiImageKeyRoute,
 }
 export const routeTree = rootRouteImport

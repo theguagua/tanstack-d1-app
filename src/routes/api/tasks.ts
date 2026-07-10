@@ -4,9 +4,8 @@ export const Route = createFileRoute('/api/tasks')({
   server: {
     handlers: ({ createHandlers }) =>
       createHandlers({
-        GET: async () => {
+        GET: async ({ context }) => {
           try {
-            // @ts-ignore - D1 binding injected by worker.ts
             const db = globalThis.DB as D1Database | undefined;
             
             if (!db) {
@@ -25,9 +24,8 @@ export const Route = createFileRoute('/api/tasks')({
             return Response.json({ tasks: [], error: e.message }, { status: 500 });
           }
         },
-        POST: async ({ request }) => {
+        POST: async ({ request, context }) => {
           try {
-            // @ts-ignore - D1 binding injected by worker.ts
             const db = globalThis.DB as D1Database | undefined;
             
             if (!db) return Response.json({ error: 'DB unavailable' }, { status: 500 });
@@ -48,9 +46,8 @@ export const Route = createFileRoute('/api/tasks')({
             return Response.json({ error: e.message }, { status: 500 });
           }
         },
-        PUT: async ({ request }) => {
+        PUT: async ({ request, context }) => {
           try {
-            // @ts-ignore - D1 binding injected by worker.ts
             const db = globalThis.DB as D1Database | undefined;
             
             if (!db) return Response.json({ error: 'DB unavailable' }, { status: 500 });
@@ -73,7 +70,6 @@ export const Route = createFileRoute('/api/tasks')({
               return Response.json({ error: 'No fields to update' }, { status: 400 });
             }
             
-            // Bind: values for updates, then id and user_id for WHERE clause
             const result = await db.prepare(
               `UPDATE tasks SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?`
             ).bind(...values, id, 1).run();
@@ -87,9 +83,8 @@ export const Route = createFileRoute('/api/tasks')({
             return Response.json({ error: e.message }, { status: 500 });
           }
         },
-        DELETE: async ({ request }) => {
+        DELETE: async ({ request, context }) => {
           try {
-            // @ts-ignore - D1 binding injected by worker.ts
             const db = globalThis.DB as D1Database | undefined;
             
             if (!db) return Response.json({ error: 'DB unavailable' }, { status: 500 });

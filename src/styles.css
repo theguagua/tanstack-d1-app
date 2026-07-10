@@ -2,6 +2,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+/* 让 Tailwind 扫描 kumo 组件库 dist，生成 bg-kumo-base / text-kumo-default 等工具类
+   （kumo 的工具类由消费方的 Tailwind 基于其 @theme 令牌生成，默认不扫描 node_modules） */
+@source "../node_modules/@cloudflare/kumo/dist";
 
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
@@ -462,3 +465,443 @@ a {
   }
 }
 
+/* === kumo 工具类：由消费方 Tailwind 基于 kumo @theme 令牌生成（v4 默认不扫描 node_modules，故手动映射；含 /NN 透明度修饰，用 color-mix 实现） === */
+@utility bg-kumo-badge-blue {
+  background-color: var(--color-kumo-badge-blue);
+}
+
+@utility bg-kumo-badge-green {
+  background-color: var(--color-kumo-badge-green);
+}
+
+@utility bg-kumo-badge-inverted {
+  background-color: var(--color-kumo-badge-inverted);
+}
+
+@utility bg-kumo-badge-neutral {
+  background-color: var(--color-kumo-badge-neutral);
+}
+
+@utility bg-kumo-badge-orange {
+  background-color: var(--color-kumo-badge-orange);
+}
+
+@utility bg-kumo-badge-purple {
+  background-color: var(--color-kumo-badge-purple);
+}
+
+@utility bg-kumo-badge-red {
+  background-color: var(--color-kumo-badge-red);
+}
+
+@utility bg-kumo-badge-teal {
+  background-color: var(--color-kumo-badge-teal);
+}
+
+@utility bg-kumo-badge-teal-subtle {
+  background-color: var(--color-kumo-badge-teal-subtle);
+}
+
+@utility bg-kumo-banner-info {
+  background-color: var(--color-kumo-banner-info);
+}
+
+@utility bg-kumo-banner-warning {
+  background-color: var(--color-kumo-banner-warning);
+}
+
+@utility bg-kumo-base {
+  background-color: var(--color-kumo-base);
+}
+
+@utility bg-kumo-base/50 {
+  background-color: color-mix(in oklab, var(--color-kumo-base) 50%, transparent);
+}
+
+@utility bg-kumo-base/90 {
+  background-color: color-mix(in oklab, var(--color-kumo-base) 90%, transparent);
+}
+
+@utility bg-kumo-brand {
+  background-color: var(--color-kumo-brand);
+}
+
+@utility bg-kumo-brand-hover {
+  background-color: var(--color-kumo-brand-hover);
+}
+
+@utility bg-kumo-brand/20 {
+  background-color: color-mix(in oklab, var(--color-kumo-brand) 20%, transparent);
+}
+
+@utility bg-kumo-canvas {
+  background-color: var(--color-kumo-canvas);
+}
+
+@utility bg-kumo-contrast {
+  background-color: var(--color-kumo-contrast);
+}
+
+@utility bg-kumo-contrast/5 {
+  background-color: color-mix(in oklab, var(--color-kumo-contrast) 5%, transparent);
+}
+
+@utility bg-kumo-control {
+  background-color: var(--color-kumo-control);
+}
+
+@utility bg-kumo-danger {
+  background-color: var(--color-kumo-danger);
+}
+
+@utility bg-kumo-danger-tint {
+  background-color: var(--color-kumo-danger-tint);
+}
+
+@utility bg-kumo-danger-tint/30 {
+  background-color: color-mix(in oklab, var(--color-kumo-danger-tint) 30%, transparent);
+}
+
+@utility bg-kumo-danger-tint/60 {
+  background-color: color-mix(in oklab, var(--color-kumo-danger-tint) 60%, transparent);
+}
+
+@utility bg-kumo-danger/5 {
+  background-color: color-mix(in oklab, var(--color-kumo-danger) 5%, transparent);
+}
+
+@utility bg-kumo-elevated {
+  background-color: var(--color-kumo-elevated);
+}
+
+@utility bg-kumo-fill {
+  background-color: var(--color-kumo-fill);
+}
+
+@utility bg-kumo-fill-hover {
+  background-color: var(--color-kumo-fill-hover);
+}
+
+@utility bg-kumo-hairline {
+  background-color: var(--color-kumo-hairline);
+}
+
+@utility bg-kumo-hairline/50 {
+  background-color: color-mix(in oklab, var(--color-kumo-hairline) 50%, transparent);
+}
+
+@utility bg-kumo-info {
+  background-color: var(--color-kumo-info);
+}
+
+@utility bg-kumo-info-tint {
+  background-color: var(--color-kumo-info-tint);
+}
+
+@utility bg-kumo-info-tint/30 {
+  background-color: color-mix(in oklab, var(--color-kumo-info-tint) 30%, transparent);
+}
+
+@utility bg-kumo-info-tint/70 {
+  background-color: color-mix(in oklab, var(--color-kumo-info-tint) 70%, transparent);
+}
+
+@utility bg-kumo-interact {
+  background-color: var(--color-kumo-interact);
+}
+
+@utility bg-kumo-interact/85 {
+  background-color: color-mix(in oklab, var(--color-kumo-interact) 85%, transparent);
+}
+
+@utility bg-kumo-line {
+  background-color: var(--color-kumo-line);
+}
+
+@utility bg-kumo-overlay {
+  background-color: var(--color-kumo-overlay);
+}
+
+@utility bg-kumo-recessed {
+  background-color: var(--color-kumo-recessed);
+}
+
+@utility bg-kumo-success {
+  background-color: var(--color-kumo-success);
+}
+
+@utility bg-kumo-success-tint {
+  background-color: var(--color-kumo-success-tint);
+}
+
+@utility bg-kumo-success-tint/20 {
+  background-color: color-mix(in oklab, var(--color-kumo-success-tint) 20%, transparent);
+}
+
+@utility bg-kumo-success-tint/70 {
+  background-color: color-mix(in oklab, var(--color-kumo-success-tint) 70%, transparent);
+}
+
+@utility bg-kumo-tint {
+  background-color: var(--color-kumo-tint);
+}
+
+@utility bg-kumo-warning {
+  background-color: var(--color-kumo-warning);
+}
+
+@utility bg-kumo-warning-tint {
+  background-color: var(--color-kumo-warning-tint);
+}
+
+@utility bg-kumo-warning-tint/20 {
+  background-color: color-mix(in oklab, var(--color-kumo-warning-tint) 20%, transparent);
+}
+
+@utility bg-kumo-warning-tint/70 {
+  background-color: color-mix(in oklab, var(--color-kumo-warning-tint) 70%, transparent);
+}
+
+@utility bg-kumo-warning/50 {
+  background-color: color-mix(in oklab, var(--color-kumo-warning) 50%, transparent);
+}
+
+@utility border-kumo-brand {
+  border-color: var(--color-kumo-brand);
+}
+
+@utility border-kumo-danger {
+  border-color: var(--color-kumo-danger);
+}
+
+@utility border-kumo-fill {
+  border-color: var(--color-kumo-fill);
+}
+
+@utility border-kumo-fill/60 {
+  border-color: color-mix(in oklab, var(--color-kumo-fill) 60%, transparent);
+}
+
+@utility border-kumo-focus {
+  border-color: var(--color-kumo-focus);
+}
+
+@utility border-kumo-focus/50 {
+  border-color: color-mix(in oklab, var(--color-kumo-focus) 50%, transparent);
+}
+
+@utility border-kumo-hairline {
+  border-color: var(--color-kumo-hairline);
+}
+
+@utility border-kumo-interact {
+  border-color: var(--color-kumo-interact);
+}
+
+@utility border-kumo-interact/80 {
+  border-color: color-mix(in oklab, var(--color-kumo-interact) 80%, transparent);
+}
+
+@utility border-kumo-line {
+  border-color: var(--color-kumo-line);
+}
+
+@utility border-kumo-recessed {
+  border-color: var(--color-kumo-recessed);
+}
+
+@utility fill-kumo-base {
+  fill: var(--color-kumo-base);
+}
+
+@utility fill-kumo-danger {
+  fill: var(--color-kumo-danger);
+}
+
+@utility fill-kumo-info {
+  fill: var(--color-kumo-info);
+}
+
+@utility fill-kumo-tip-shadow {
+  fill: var(--color-kumo-tip-shadow);
+}
+
+@utility fill-kumo-tip-stroke {
+  fill: var(--color-kumo-tip-stroke);
+}
+
+@utility fill-kumo-warning {
+  fill: var(--color-kumo-warning);
+}
+
+@utility from-kumo-brand {
+  --tw-gradient-from: var(--color-kumo-brand);
+}
+
+@utility outline-kumo-fill {
+  outline-color: var(--color-kumo-fill);
+}
+
+@utility outline-kumo-focus {
+  outline-color: var(--color-kumo-focus);
+}
+
+@utility ring-kumo-brand {
+  --tw-ring-color: var(--color-kumo-brand);
+}
+
+@utility ring-kumo-contrast {
+  --tw-ring-color: var(--color-kumo-contrast);
+}
+
+@utility ring-kumo-danger {
+  --tw-ring-color: var(--color-kumo-danger);
+}
+
+@utility ring-kumo-danger/30 {
+  --tw-ring-color: color-mix(in oklab, var(--color-kumo-danger) 30%, transparent);
+}
+
+@utility ring-kumo-danger/50 {
+  --tw-ring-color: color-mix(in oklab, var(--color-kumo-danger) 50%, transparent);
+}
+
+@utility ring-kumo-fill {
+  --tw-ring-color: var(--color-kumo-fill);
+}
+
+@utility ring-kumo-focus {
+  --tw-ring-color: var(--color-kumo-focus);
+}
+
+@utility ring-kumo-focus/25 {
+  --tw-ring-color: color-mix(in oklab, var(--color-kumo-focus) 25%, transparent);
+}
+
+@utility ring-kumo-focus/50 {
+  --tw-ring-color: color-mix(in oklab, var(--color-kumo-focus) 50%, transparent);
+}
+
+@utility ring-kumo-hairline {
+  --tw-ring-color: var(--color-kumo-hairline);
+}
+
+@utility ring-kumo-hairline/70 {
+  --tw-ring-color: color-mix(in oklab, var(--color-kumo-hairline) 70%, transparent);
+}
+
+@utility ring-kumo-info {
+  --tw-ring-color: var(--color-kumo-info);
+}
+
+@utility ring-kumo-line {
+  --tw-ring-color: var(--color-kumo-line);
+}
+
+@utility ring-kumo-success {
+  --tw-ring-color: var(--color-kumo-success);
+}
+
+@utility ring-kumo-warning {
+  --tw-ring-color: var(--color-kumo-warning);
+}
+
+@utility shadow-kumo-tip-shadow {
+  --tw-shadow-color: var(--color-kumo-tip-shadow);
+}
+
+@utility text-kumo-badge-inverted {
+  color: var(--text-color-kumo-badge-inverted, var(--color-kumo-badge-inverted));
+}
+
+@utility text-kumo-badge-neutral-subtle {
+  color: var(--text-color-kumo-badge-neutral-subtle, var(--color-kumo-badge-neutral-subtle));
+}
+
+@utility text-kumo-badge-teal-subtle {
+  color: var(--text-color-kumo-badge-teal-subtle, var(--color-kumo-badge-teal-subtle));
+}
+
+@utility text-kumo-base {
+  color: var(--text-color-kumo-base, var(--color-kumo-base));
+}
+
+@utility text-kumo-brand {
+  color: var(--text-color-kumo-brand, var(--color-kumo-brand));
+}
+
+@utility text-kumo-danger {
+  color: var(--text-color-kumo-danger, var(--color-kumo-danger));
+}
+
+@utility text-kumo-danger/70 {
+  color: color-mix(in oklab, var(--text-color-kumo-danger, var(--color-kumo-danger)) 70%, transparent);
+}
+
+@utility text-kumo-default {
+  color: var(--text-color-kumo-default, var(--color-kumo-default));
+}
+
+@utility text-kumo-default/70 {
+  color: color-mix(in oklab, var(--text-color-kumo-default, var(--color-kumo-default)) 70%, transparent);
+}
+
+@utility text-kumo-disabled {
+  color: var(--text-color-kumo-disabled, var(--color-kumo-disabled));
+}
+
+@utility text-kumo-inactive {
+  color: var(--text-color-kumo-inactive, var(--color-kumo-inactive));
+}
+
+@utility text-kumo-info {
+  color: var(--text-color-kumo-info, var(--color-kumo-info));
+}
+
+@utility text-kumo-inverse {
+  color: var(--text-color-kumo-inverse, var(--color-kumo-inverse));
+}
+
+@utility text-kumo-link {
+  color: var(--text-color-kumo-link, var(--color-kumo-link));
+}
+
+@utility text-kumo-link/70 {
+  color: color-mix(in oklab, var(--text-color-kumo-link, var(--color-kumo-link)) 70%, transparent);
+}
+
+@utility text-kumo-placeholder {
+  color: var(--text-color-kumo-placeholder, var(--color-kumo-placeholder));
+}
+
+@utility text-kumo-strong {
+  color: var(--text-color-kumo-strong, var(--color-kumo-strong));
+}
+
+@utility text-kumo-subtle {
+  color: var(--text-color-kumo-subtle, var(--color-kumo-subtle));
+}
+
+@utility text-kumo-success {
+  color: var(--text-color-kumo-success, var(--color-kumo-success));
+}
+
+@utility text-kumo-warning {
+  color: var(--text-color-kumo-warning, var(--color-kumo-warning));
+}
+
+@utility to-kumo-base {
+  --tw-gradient-to: var(--color-kumo-base);
+}
+
+@utility to-kumo-brand {
+  --tw-gradient-to: var(--color-kumo-brand);
+}
+
+@utility to-kumo-elevated {
+  --tw-gradient-to: var(--color-kumo-elevated);
+}
+
+@utility via-kumo-brand {
+  --tw-gradient-via: var(--color-kumo-brand);
+}

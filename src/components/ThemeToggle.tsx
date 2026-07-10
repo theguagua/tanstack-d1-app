@@ -29,6 +29,8 @@ function applyThemeMode(mode: ThemeMode) {
   }
 
   document.documentElement.style.colorScheme = resolved
+  // kumo 组件库通过 data-mode 切换 light-dark() 令牌
+  document.documentElement.setAttribute('data-mode', resolved)
 }
 
 export default function ThemeToggle() {
