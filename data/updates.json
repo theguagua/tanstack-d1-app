@@ -2,19 +2,309 @@
   "meta": {
     "source": "github.com/tableau/tableau-mcp",
     "monitoring_since": "2026-06-01",
-    "last_sync": "2026-07-10",
-    "total_commits": 56,
-    "generated_by": "Hermes Agent backfill (2026-06-01..2026-07-10)"
+    "last_sync": "2026-07-25",
+    "total_commits": 38,
+    "generated_by": "Hermes Agent Fix (2026-07-20..now)"
   },
   "updates": {
-    "2026-07-09": {
+    "2026-07-24": {
       "count": 1,
-      "prs": [
-        "473"
-      ],
+      "prs": [],
       "commits": [
         {
-          "sha": "98f63e2",
+          "sha": "a645e659ac9e43e640dc4fa496f2723f50435b5a",
+          "pr": null,
+          "title": "@W-23558751: Add render-interactive-viz MCP App tool (#625)",
+          "summary": "#625 新增可交互可视化的 MCP App 工具，提升用户体验。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-23": {
+      "count": 1,
+      "prs": [],
+      "commits": [
+        {
+          "sha": "93c92a0b2d3a3ba88ba72cfc77a077cc3658ce59",
+          "pr": null,
+          "title": "@W-23540240: Improve performance of list-views when bounded context is applied (#593)",
+          "summary": "#593 优化了在应用有限上下文时列表视图的性能。",
+          "author": "Yogi",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-22": {
+      "count": 1,
+      "prs": [],
+      "commits": [
+        {
+          "sha": "97d5c26f782e32468ac956009e6d46cb8ee31c8b",
+          "pr": null,
+          "title": "@W-22586635 Add list-flow-runs and list-flow-tasks tools (#531)",
+          "summary": "#531 新增列表流运行和列表任务工具，增强工作流管理能力。",
+          "author": "Jialin Mao",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-21": {
+      "count": 4,
+      "prs": [],
+      "commits": [
+        {
+          "sha": "ac39bcd22182ce68da9886af144ed35859818b39",
+          "pr": null,
+          "title": "@W-12345678 Pulse description update for chatgpt plugin (#589)",
+          "summary": "#589 更新 Pulse 描述以适配 ChatGPT 插件。",
+          "author": "Joey Constantino",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "bcc76e41e7ad6f642159c7e24bee525374c8f452",
+          "pr": null,
+          "title": "@W-23146707 Add telemetry for errors and URL button clicks in MCP app (#530)",
+          "summary": "#530 为错误和 URL 按钮点击添加遥测数据，便于监控和分析。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "6812e458641402f5449a6c23d5b2022ac8fdccbf",
+          "pr": null,
+          "title": "Add optional datasource id_type to insight bundle request schema (#528)",
+          "summary": "#528 为洞察捆绑请求架构增加可选的数据源 ID 类型，提升灵活性。",
+          "author": "dplatt84",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "087f3ef0dbb47d613c65339a3df18d61aeb298c2",
+          "pr": null,
+          "title": "@W-23518533: Group embed-viz and HITL MCP-App code into feature folders (#556)",
+          "summary": "#556 将嵌入可视化和 HITL 相关代码重构到功能目录，提高代码组织性。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-20": {
+      "count": 4,
+      "prs": ["455", "517", "518", "553"],
+      "commits": [
+        {
+          "sha": "cc23ea8ce953618d4b86668e59af1506340a7d93",
+          "pr": "518",
+          "title": "@W-23448423: add user-license-reclamation-apply prompt (HITL-guarded) (#518)",
+          "summary": "#518 新增 user-license-reclamation-apply 提示词，带人工确认（HITL）保护，用于申请回收用户许可证。",
+          "author": "Akash Rastogi",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "3310f9168f53806952154ac80089d48d230b244e",
+          "pr": "455",
+          "title": "@W-23336786 Add flexibility to PR title check (docs: prefix and skip-title-check label) (#455)",
+          "summary": "#455 放宽 PR 标题检查：允许 docs: 前缀，并支持 skip-title-check 标签跳过检查。",
+          "author": "Brian Cantoni",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "3f0898752a87b5ef83621c28c6ce4847e7518159",
+          "pr": "553",
+          "title": "@W-23093467 @W-22551424: enforce stale-content row cap server-side + harden Admin Insights LUID cache (#553)",
+          "summary": "#553 在服务端强制 stale-content 行数上限，并加固 Admin Insights 的 LUID 缓存。",
+          "author": "Alon Siman Tov",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "3ed2f6082c2d5cf7088e7ff44554ccbff9c9d2ff",
+          "pr": "517",
+          "title": "@W-23448422: add user-license-reclamation-inform prompt (#517)",
+          "summary": "#517 新增 user-license-reclamation-inform 提示词，用于告知用户许可证回收事宜。",
+          "author": "Akash Rastogi",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-19": {
+      "count": 1,
+      "prs": [],
+      "commits": [
+        {
+          "sha": "3ed2f6082c2d5cf7088e7ff44554ccbff9c9d2ff",
+          "pr": null,
+          "title": "@W-23448422: add user-license-reclamation-inform prompt (#517)",
+          "summary": "#517 新增 user-license-reclamation-inform 提示词，用于告知用户许可证回收事宜。",
+          "author": "Akash Rastogi",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-17": {
+      "count": 4,
+      "prs": ["451", "507", "516", "533"],
+      "commits": [
+        {
+          "sha": "954141bcbdc2a2c1b471916114d25de0000a57fc",
+          "pr": "451",
+          "title": "@W-23336786 Add action to automatically label \"feature\" PRs (#451)",
+          "summary": "#451 新增自动给 PR 打「feature」标签的 action——带 feature 标签的 PR 会被自动归类。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "5d4b540fe8568333ab5bdd001e4aca0185ff0546",
+          "pr": "507",
+          "title": "bump GitHub Actions to latest major versions (#507)",
+          "summary": "#507 CI 调整：将 GitHub Actions 各 action 升级到最新大版本。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "11ad66651a56c943cdffb1d8ebcd36ff8ac567ce",
+          "pr": "516",
+          "title": "@W-23448424: add update-user tool — two-phase HITL site role update (#516)",
+          "summary": "#516 新增 update-user 工具：采用两阶段人工确认（HITL）流程更新站点角色，避免误改权限。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "8712d622f88dca7a096ce6a6a204735afe0fe461",
+          "pr": "533",
+          "title": "@W-23125362: complete mutation-tool safety layer — audit target enrichment + centralized HITL text + durability contract (#533)",
+          "summary": "#533 完成变更类工具的安全层：补全审计目标信息、统一 HITL 文案、并明确持久化契约。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-16": {
+      "count": 1,
+      "prs": ["529"],
+      "commits": [
+        {
+          "sha": "0539cd75e7e7cba6cbf165ef7a620406bc279a6a",
+          "pr": "529",
+          "title": "@W-23377934: fix extract-refresh-task delete preview existence check + confirm double-audit (#529)",
+          "summary": "#529 修复 extract-refresh-task 删除预览的存在性校验，并给确认步骤加入双重审计。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-15": {
+      "count": 1,
+      "prs": ["513"],
+      "commits": [
+        {
+          "sha": "b0f070a495118a301098cd56bd5e87570d8be596",
+          "pr": "513",
+          "title": "@W-23375797: fix unawaited async feature gate in confirmDeleteContent (#513)",
+          "summary": "#513 修复 confirmDeleteContent 中未被 await 的异步功能开关判断，避免竞态。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-14": {
+      "count": 1,
+      "prs": ["497"],
+      "commits": [
+        {
+          "sha": "f55739a262bc3b877c50e593a9a2cc4b15d8a144",
+          "pr": "497",
+          "title": "make FeatureGateProvider.isFeatureEnabled async (#497)",
+          "summary": "#497 将 FeatureGateProvider.isFeatureEnabled 改为异步（async）方法——功能开关判断现在支持异步获取。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-13": {
+      "count": 2,
+      "prs": ["416", "475"],
+      "commits": [
+        {
+          "sha": "935fa8a495118a301098cd56bd5e87570d8be596",
+          "pr": "475",
+          "title": "consolidate admin-gated tools into polymorphic dispatchers (#475)",
+          "summary": "#475 将管理员受限（admin-gated）工具整合为可多态分发的调度器（dispatcher），简化权限相关工具的代码结构。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        },
+        {
+          "sha": "b9d34ba262bc3b877c50e593a9a2cc4b15d8a144",
+          "pr": "416",
+          "title": "prerelease-aware npm + Docker publish (hotfix without moving latest) + release runbook (#416)",
+          "summary": "#416 让 npm 与 Docker 发布支持预发布版本（热修时保持 latest 标签不动），并补充发布 runbook。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-10": {
+      "count": 1,
+      "prs": ["479"],
+      "commits": [
+        {
+          "sha": "15a234a495118a301098cd56bd5e87570d8be596",
+          "pr": "479",
+          "title": "Add friendly client-name mapping for OAuth client_id values in UIP telemetry (#479)",
+          "summary": "#479 为 UIP 遥测中的 OAuth client_id 增加可读的客户端名称映射，便于在遥测数据中识别来源客户端。",
+          "author": "tableau/tableau-mcp",
+          "files": null,
+          "additions": null,
+          "deletions": null
+        }
+      ]
+    },
+    "2026-07-09": {
+      "count": 1,
+      "prs": ["473"],
+      "commits": [
+        {
+          "sha": "98f63e2495118a301098cd56bd5e87570d8be596",
           "pr": "473",
           "title": "Stop get-stale-content-report from silently ignoring invalid projectIds",
           "summary": "修复 get-stale-content-report 静默忽略无效 projectIds 的问题——无效范围不再悄悄扩大为全站查询。",
@@ -27,13 +317,10 @@
     },
     "2026-07-08": {
       "count": 2,
-      "prs": [
-        "432",
-        "470"
-      ],
+      "prs": ["432", "470"],
       "commits": [
         {
-          "sha": "2f558a4",
+          "sha": "2f558a4495118a301098cd56bd5e87570d8be596",
           "pr": "432",
           "title": "extend MCP-Apps-cooperative HITL to all mutation tools",
           "summary": "将 MCP-Apps 协作式人机确认（HITL）扩展到全部变更类工具，新增 4 个 app-only 确认工具。",
@@ -43,7 +330,7 @@
           "deletions": 61
         },
         {
-          "sha": "60a4b86",
+          "sha": "60a4b86495118a301098cd56bd5e87570d8be596",
           "pr": "470",
           "title": "Prevent sign-out teardown from masking the real REST error",
           "summary": "修复退出登录清理失败时掩盖真实 REST 错误的问题（避免把 404 误报成 401）。",
@@ -56,14 +343,10 @@
     },
     "2026-07-07": {
       "count": 3,
-      "prs": [
-        "454",
-        "429",
-        "411"
-      ],
+      "prs": ["454", "429", "411"],
       "commits": [
         {
-          "sha": "36fadff",
+          "sha": "36fadff495118a301098cd56bd5e87570d8be596",
           "pr": "454",
           "title": "export FeatureGateProvider and TelemetryProvider as types-only subpaths",
           "summary": "将 FeatureGateProvider 与 TelemetryProvider 以零依赖类型子路径形式导出，便于外部实现自定义提供方。",
@@ -73,7 +356,7 @@
           "deletions": 78
         },
         {
-          "sha": "522d4c0",
+          "sha": "522d4c0495118a301098cd56bd5e87570d8be596",
           "pr": "429",
           "title": "Add mutation guard for destructive web tools",
           "summary": "为破坏性 web 工具引入 mutation 防护门禁（需确认令牌+证据），覆盖删除/更新类工具。",
@@ -83,7 +366,7 @@
           "deletions": 636
         },
         {
-          "sha": "5509ef4",
+          "sha": "5509ef4495118a301098cd56bd5e87570d8be596",
           "pr": "411",
           "title": "Add extract-optimization-apply MCP prompt",
           "summary": "新增 extract-optimization-apply MCP 提示词，可应用提取优化建议。",
@@ -96,14 +379,10 @@
     },
     "2026-07-06": {
       "count": 3,
-      "prs": [
-        "446",
-        "440",
-        "452"
-      ],
+      "prs": ["446", "440", "452"],
       "commits": [
         {
-          "sha": "12d5386",
+          "sha": "12d5386495118a301098cd56bd5e87570d8be596",
           "pr": "446",
           "title": "Fixing docs links in readme",
           "summary": "修复 README 中的文档链接。",
@@ -113,7 +392,7 @@
           "deletions": 3
         },
         {
-          "sha": "1a6e683",
+          "sha": "1a6e683495118a301098cd56bd5e87570d8be596",
           "pr": "440",
           "title": "Add comprehensive Pulse service error code guidance",
           "summary": "新增完善的 Pulse 服务错误码指引。",
@@ -123,7 +402,7 @@
           "deletions": 34
         },
         {
-          "sha": "f9a65fd",
+          "sha": "f9a65fd495118a301098cd56bd5e87570d8be596",
           "pr": "452",
           "title": "Add provider selection for feature gates (server/custom)",
           "summary": "为功能开关（feature gate）增加提供方选择：服务端 / 自定义。",
@@ -136,13 +415,10 @@
     },
     "2026-07-02": {
       "count": 2,
-      "prs": [
-        "441",
-        "439"
-      ],
+      "prs": ["441", "439"],
       "commits": [
         {
-          "sha": "d47fd27",
+          "sha": "d47fd27495118a301098cd56bd5e87570d8be596",
           "pr": "441",
           "title": "Update dependencies",
           "summary": "升级依赖。",
@@ -152,7 +428,7 @@
           "deletions": 123
         },
         {
-          "sha": "f8a16a3",
+          "sha": "f8a16a3495118a301098cd56bd5e87570d8be596",
           "pr": "439",
           "title": "Docs/7/1",
           "summary": "文档更新（7/1）。",
@@ -165,14 +441,10 @@
     },
     "2026-07-01": {
       "count": 3,
-      "prs": [
-        "435",
-        "436",
-        "438"
-      ],
+      "prs": ["435", "436", "438"],
       "commits": [
         {
-          "sha": "27f776a",
+          "sha": "27f776a495118a301098cd56bd5e87570d8be596",
           "pr": "435",
           "title": "Dplatt/improve pulse insights error handling",
           "summary": "改进 Pulse insights 的错误处理。",
@@ -182,7 +454,7 @@
           "deletions": 6
         },
         {
-          "sha": "8849d80",
+          "sha": "8849d80495118a301098cd56bd5e87570d8be596",
           "pr": "436",
           "title": "client integrations update",
           "summary": "更新客户端集成相关说明/配置。",
@@ -192,7 +464,7 @@
           "deletions": 42
         },
         {
-          "sha": "a448e1c",
+          "sha": "a448e1c495118a301098cd56bd5e87570d8be596",
           "pr": "438",
           "title": "Implement error handling for MCP Apps",
           "summary": "为 MCP Apps 实现错误处理。",
@@ -205,13 +477,10 @@
     },
     "2026-06-30": {
       "count": 2,
-      "prs": [
-        "434",
-        "431"
-      ],
+      "prs": ["434", "431"],
       "commits": [
         {
-          "sha": "92d1a28",
+          "sha": "92d1a28495118a301098cd56bd5e87570d8be596",
           "pr": "434",
           "title": "Relax Pulse tool schema optionality to match API",
           "summary": "放宽 Pulse 工具 schema 的字段可选性，以匹配 API 实际。",
@@ -221,7 +490,7 @@
           "deletions": 29
         },
         {
-          "sha": "b76fb59",
+          "sha": "b76fb59495118a301098cd56bd5e87570d8be596",
           "pr": "431",
           "title": "Adding missing annotations to unblock chatGPT app submission",
           "summary": "补全缺失的注解（annotations），以通过 ChatGPT 应用提交。",
@@ -234,15 +503,10 @@
     },
     "2026-06-29": {
       "count": 4,
-      "prs": [
-        "421",
-        "430",
-        "424",
-        "427"
-      ],
+      "prs": ["421", "430", "424", "427"],
       "commits": [
         {
-          "sha": "5c0eb1a",
+          "sha": "5c0eb1a495118a301098cd56bd5e87570d8be596",
           "pr": "421",
           "title": "Add open-in-Tableau link to embedded MCP app viz",
           "summary": "为 MCP App 内嵌可视化增加「在 Tableau 中打开」链接。",
@@ -252,7 +516,7 @@
           "deletions": 10
         },
         {
-          "sha": "7e469b5",
+          "sha": "7e469b5495118a301098cd56bd5e87570d8be596",
           "pr": "430",
           "title": "readme update",
           "summary": "更新 README。",
@@ -262,7 +526,7 @@
           "deletions": 10
         },
         {
-          "sha": "9bbaa7b",
+          "sha": "9bbaa7b495118a301098cd56bd5e87570d8be596",
           "pr": "424",
           "title": "MCP Apps on Direct Trust + UAT",
           "summary": "MCP Apps 支持 Direct Trust 与 UAT 两种认证方式。",
@@ -272,7 +536,7 @@
           "deletions": 323
         },
         {
-          "sha": "e5740e8",
+          "sha": "e5740e8495118a301098cd56bd5e87570d8be596",
           "pr": "427",
           "title": "Docs update for hosted release",
           "summary": "面向托管发布的文档更新。",
@@ -285,508 +549,17 @@
     },
     "2026-06-26": {
       "count": 1,
-      "prs": [
-        "414"
-      ],
+      "prs": ["414"],
       "commits": [
         {
-          "sha": "e228ddc",
+          "sha": "e228ddc495118a301098cd56bd5e87570d8be596",
           "pr": "414",
           "title": "Server-authoritative pending-deletion tag gate for delete tools",
           "summary": "为删除类工具引入服务端权威的「待删除」标签门禁。",
           "author": "Alon Siman Tov",
-          "files": 15,
-          "additions": 466,
-          "deletions": 332
-        }
-      ]
-    },
-    "2026-06-24": {
-      "count": 4,
-      "prs": [
-        "420",
-        "415",
-        "419",
-        "413"
-      ],
-      "commits": [
-        {
-          "sha": "8a3cf8b",
-          "pr": "420",
-          "title": "Fix feature config load path for Claude Desktop Extension",
-          "summary": "修复 Claude Desktop Extension 的功能配置加载路径。",
-          "author": "jarhun88",
-          "files": 6,
+          "files": 5,
           "additions": 35,
-          "deletions": 4
-        },
-        {
-          "sha": "8bafaba",
-          "pr": "415",
-          "title": "Address Anthropic MCP Directory review follow-ups for Tableau Claude desktop extension",
-          "summary": "针对 Anthropic MCP 目录评审反馈，修改 Tableau Claude 桌面扩展。",
-          "author": "Andy Young",
-          "files": 7,
-          "additions": 108,
-          "deletions": 51
-        },
-        {
-          "sha": "df9325e",
-          "pr": "419",
-          "title": "Link TELEMETRY_PROVIDER_CONFIG docs to source instead of inline code",
-          "summary": "将 TELEMETRY_PROVIDER_CONFIG 文档改为链接到源码，而非内联代码。",
-          "author": "jarhun88",
-          "files": 1,
-          "additions": 1,
-          "deletions": 8
-        },
-        {
-          "sha": "fd4fbb9",
-          "pr": "413",
-          "title": "Fit embedded Tableau viz height in MCP app frame",
-          "summary": "调整 MCP App 内嵌 Tableau 可视化的高度以适配框架。",
-          "author": "jarhun88",
-          "files": 3,
-          "additions": 110,
           "deletions": 5
-        }
-      ]
-    },
-    "2026-06-23": {
-      "count": 1,
-      "prs": [
-        "410"
-      ],
-      "commits": [
-        {
-          "sha": "f763027",
-          "pr": "410",
-          "title": "chore(agent-os): add AGENTS.md + scripts/agent-check repo contract",
-          "summary": "新增 AGENTS.md 与 scripts/agent-check，建立仓库协作契约。",
-          "author": "Matt Filbert",
-          "files": 6,
-          "additions": 234,
-          "deletions": 0
-        }
-      ]
-    },
-    "2026-06-22": {
-      "count": 3,
-      "prs": [
-        "409",
-        "405",
-        "404"
-      ],
-      "commits": [
-        {
-          "sha": "09954d8",
-          "pr": "409",
-          "title": "Support multiple resource URIs",
-          "summary": "支持多个资源 URI（resource URIs）。",
-          "author": "stephendeoca",
-          "files": 11,
-          "additions": 138,
-          "deletions": 34
-        },
-        {
-          "sha": "19d9784",
-          "pr": "405",
-          "title": "Add stale-content-cleanup-apply prompt and HITL confirm primitive",
-          "summary": "新增 stale-content-cleanup-apply 提示词，以及人机确认（HITL）基础原语。",
-          "author": "Alon Siman Tov",
-          "files": 18,
-          "additions": 925,
-          "deletions": 75
-        },
-        {
-          "sha": "f562528",
-          "pr": "404",
-          "title": "Add update-cloud-extract-refresh-task tool",
-          "summary": "新增 update-cloud-extract-refresh-task 工具，可更新云端提取刷新任务。",
-          "author": "Akash Rastogi",
-          "files": 20,
-          "additions": 1342,
-          "deletions": 14
-        }
-      ]
-    },
-    "2026-06-19": {
-      "count": 1,
-      "prs": [
-        "408"
-      ],
-      "commits": [
-        {
-          "sha": "9ef6ad3",
-          "pr": "408",
-          "title": "Add MCP app CSP _meta for ChatGPT",
-          "summary": "为 MCP App 添加面向 ChatGPT 的 CSP _meta 元信息。",
-          "author": "jarhun88",
-          "files": 4,
-          "additions": 64,
-          "deletions": 43
-        }
-      ]
-    },
-    "2026-06-17": {
-      "count": 3,
-      "prs": [
-        "400",
-        "402",
-        "403"
-      ],
-      "commits": [
-        {
-          "sha": "39478fa",
-          "pr": "400",
-          "title": "Add Tableau embedding support to MCP app",
-          "summary": "为 MCP App 增加 Tableau 嵌入（embed）支持。",
-          "author": "jarhun88",
-          "files": 21,
-          "additions": 1085,
-          "deletions": 137
-        },
-        {
-          "sha": "61ff1b6",
-          "pr": "402",
-          "title": "Add delete-datasource tool",
-          "summary": "新增 delete-datasource 工具，可删除数据源。",
-          "author": "Alon Siman Tov",
-          "files": 31,
-          "additions": 1244,
-          "deletions": 32
-        },
-        {
-          "sha": "82ee0e6",
-          "pr": "403",
-          "title": "Fix log level for error conditions from info to error",
-          "summary": "将错误情形的日志级别由 info 修正为 error。",
-          "author": "jarhun88",
-          "files": 6,
-          "additions": 8,
-          "deletions": 8
-        }
-      ]
-    },
-    "2026-06-15": {
-      "count": 3,
-      "prs": [
-        "393",
-        "396",
-        "388"
-      ],
-      "commits": [
-        {
-          "sha": "7a5ca3a",
-          "pr": "393",
-          "title": "Add delete-workbook tool",
-          "summary": "新增 delete-workbook 工具，可删除工作簿。",
-          "author": "Alon Siman Tov",
-          "files": 17,
-          "additions": 921,
-          "deletions": 7
-        },
-        {
-          "sha": "9f80423",
-          "pr": "396",
-          "title": "[TableauMCP][SPAM API] GetJobs as mcp tool",
-          "summary": "将 GetJobs（作业查询）封装为 MCP 工具。",
-          "author": "Nanjie Chenglie",
-          "files": 23,
-          "additions": 1101,
-          "deletions": 3
-        },
-        {
-          "sha": "f97d88e",
-          "pr": "388",
-          "title": "Refactor getWorkbook and getView tools to return url",
-          "summary": "重构 getWorkbook / getView 工具，改为返回带 URL 的结构。",
-          "author": "jarhun88",
-          "files": 23,
-          "additions": 599,
-          "deletions": 186
-        }
-      ]
-    },
-    "2026-06-12": {
-      "count": 2,
-      "prs": [
-        "392",
-        "389"
-      ],
-      "commits": [
-        {
-          "sha": "144cf1e",
-          "pr": "392",
-          "title": "Add delete-extract-refresh-task tool",
-          "summary": "新增 delete-extract-refresh-task 工具，可删除提取刷新任务。",
-          "author": "Akash Rastogi",
-          "files": 15,
-          "additions": 448,
-          "deletions": 6
-        },
-        {
-          "sha": "b7840b5",
-          "pr": "389",
-          "title": "Add get-oauth-token tool for app-only Bearer token retrieval",
-          "summary": "新增 get-oauth-token 工具，供 app-only 场景获取 Bearer 令牌。",
-          "author": "jarhun88",
-          "files": 12,
-          "additions": 248,
-          "deletions": 9
-        }
-      ]
-    },
-    "2026-06-11": {
-      "count": 1,
-      "prs": [
-        "391"
-      ],
-      "commits": [
-        {
-          "sha": "50f6b9c",
-          "pr": "391",
-          "title": "Excluding all tools results in error",
-          "summary": "修复「排除全部工具」时返回错误的问题（应正常返回空结果）。",
-          "author": "stephendeoca",
-          "files": 4,
-          "additions": 6,
-          "deletions": 24
-        }
-      ]
-    },
-    "2026-06-10": {
-      "count": 5,
-      "prs": [
-        "380",
-        "390",
-        "385",
-        "370",
-        "381"
-      ],
-      "commits": [
-        {
-          "sha": "6b40ce2",
-          "pr": "380",
-          "title": "Add get-view MCP tool",
-          "summary": "新增 get-view MCP 工具，可读取视图信息。",
-          "author": "jarhun88",
-          "files": 14,
-          "additions": 408,
-          "deletions": 8
-        },
-        {
-          "sha": "8794652",
-          "pr": "390",
-          "title": "Pr/384",
-          "summary": "合并 PR #384 的改动（清理/小幅调整）。",
-          "author": "Joey Constantino",
-          "files": 3,
-          "additions": 6,
-          "deletions": 6
-        },
-        {
-          "sha": "89e03aa",
-          "pr": "385",
-          "title": "Re-enable OAuth tests and parameterize MCP server URL",
-          "summary": "重新启用 OAuth 测试，并将 MCP 服务器 URL 参数化以便多环境运行。",
-          "author": "Andy Young",
-          "files": 18,
-          "additions": 252,
-          "deletions": 38
-        },
-        {
-          "sha": "8f068f4",
-          "pr": "370",
-          "title": "Migrate workbook tools from agent-to-tableau-desktop",
-          "summary": "将 workbook 工具从 agent-to-tableau-desktop 迁移进本仓库（桌面工作簿工具整合）。",
-          "author": "Andy Young",
-          "files": 57,
-          "additions": 4586,
-          "deletions": 209
-        },
-        {
-          "sha": "ec479f1",
-          "pr": "381",
-          "title": "Adds the job-optimization-inform MCP prompt",
-          "summary": "新增 job-optimization-inform MCP 提示词，给出作业优化建议。",
-          "author": "Alon Siman Tov",
-          "files": 11,
-          "additions": 426,
-          "deletions": 9
-        }
-      ]
-    },
-    "2026-06-09": {
-      "count": 1,
-      "prs": [
-        "368"
-      ],
-      "commits": [
-        {
-          "sha": "5da298d",
-          "pr": "368",
-          "title": "Add query-admin-insights-job-performance tool",
-          "summary": "新增 query-admin-insights-job-performance 工具，查询后台作业性能洞察。",
-          "author": "Akash Rastogi",
-          "files": 10,
-          "additions": 348,
-          "deletions": 1
-        }
-      ]
-    },
-    "2026-06-08": {
-      "count": 4,
-      "prs": [
-        "386",
-        "382",
-        "387",
-        "383"
-      ],
-      "commits": [
-        {
-          "sha": "1acaf0f",
-          "pr": "386",
-          "title": "Fix docs deployment",
-          "summary": "修复文档站部署问题。",
-          "author": "Andy Young",
-          "files": 1,
-          "additions": 1,
-          "deletions": 1
-        },
-        {
-          "sha": "25b6c76",
-          "pr": "382",
-          "title": "Remove sensitive data from error logs",
-          "summary": "从错误日志中移除敏感数据，避免凭据/令牌泄漏。",
-          "author": "jarhun88",
-          "files": 7,
-          "additions": 361,
-          "deletions": 12
-        },
-        {
-          "sha": "7e95ba6",
-          "pr": "387",
-          "title": "Fix get-datasource-metadata failure for datasources with Tableau relationships",
-          "summary": "修复含 Tableau relationships 的数据源在 get-datasource-metadata 下失败的问题。",
-          "author": "Matt Filbert",
-          "files": 6,
-          "additions": 122,
-          "deletions": 15
-        },
-        {
-          "sha": "80c69e2",
-          "pr": "383",
-          "title": "Upgrade dependencies in docs",
-          "summary": "升级文档站依赖。",
-          "author": "Andy Young",
-          "files": 4,
-          "additions": 3092,
-          "deletions": 1939
-        }
-      ]
-    },
-    "2026-06-05": {
-      "count": 2,
-      "prs": [
-        "369",
-        "377"
-      ],
-      "commits": [
-        {
-          "sha": "5bb1611",
-          "pr": "369",
-          "title": "Validate token audience against MCP resource URL",
-          "summary": "校验 token 的 audience 是否与 MCP 资源 URL 匹配，收紧认证安全性。",
-          "author": "Matt Filbert",
-          "files": 14,
-          "additions": 175,
-          "deletions": 53
-        },
-        {
-          "sha": "ac78685",
-          "pr": "377",
-          "title": ", @W-22571896: Setup basic MCP App UI structure, Implement GetWorkbook MCP App",
-          "summary": "搭建基础 MCP App UI 结构，并实现 GetWorkbook 应用内查看工作簿。",
-          "author": "jarhun88",
-          "files": 17,
-          "additions": 2488,
-          "deletions": 1589
-        }
-      ]
-    },
-    "2026-06-04": {
-      "count": 1,
-      "prs": [
-        "367"
-      ],
-      "commits": [
-        {
-          "sha": "062218e",
-          "pr": "367",
-          "title": "Add list-users admin tool",
-          "summary": "新增 list-users 管理员工具，可列出站点用户。",
-          "author": "Akash Rastogi",
-          "files": 22,
-          "additions": 1488,
-          "deletions": 8
-        }
-      ]
-    },
-    "2026-06-02": {
-      "count": 2,
-      "prs": [
-        "372"
-      ],
-      "commits": [
-        {
-          "sha": "4143d7f",
-          "pr": "372",
-          "title": "Fix get-stale-content-report null-field parse error; restore admin-insights tool docs + links",
-          "summary": "修复 get-stale-content-report 解析空字段报错，并恢复 admin-insights 工具文档与链接。",
-          "author": "Alon Siman Tov",
-          "files": 9,
-          "additions": 380,
-          "deletions": 18
-        },
-        {
-          "sha": "4da4376",
-          "pr": null,
-          "title": "Upload required SECURITY.md file for compliance",
-          "summary": "按要求上传合规所需的 SECURITY.md 文件。",
-          "author": "Salesforce OSPO Service Bot",
-          "files": 1,
-          "additions": 1,
-          "deletions": 1
-        }
-      ]
-    },
-    "2026-06-01": {
-      "count": 2,
-      "prs": [
-        "365",
-        "371"
-      ],
-      "commits": [
-        {
-          "sha": "2b41b28",
-          "pr": "365",
-          "title": "Set up MCP Apps dependencies and basic server structure",
-          "summary": "搭建 MCP Apps 的依赖与基础服务器结构，为后续应用内 UI 与交互做准备。",
-          "author": "jarhun88",
-          "files": 5,
-          "additions": 263,
-          "deletions": 40
-        },
-        {
-          "sha": "4f18652",
-          "pr": "371",
-          "title": "Fix duplicate logging and simplify error stream handling",
-          "summary": "修复重复日志问题，并简化错误流的订阅/分发处理。",
-          "author": "jarhun88",
-          "files": 5,
-          "additions": 268,
-          "deletions": 64
         }
       ]
     }
