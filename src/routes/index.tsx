@@ -1,3 +1,4 @@
+// src/routes/index.tsx - Updated to display Chinese explanations
 import { createFileRoute } from '@tanstack/react-router';
 import { LayerCard, Text, Link, Badge } from '@cloudflare/kumo';
 import updatesData from '../../data/updates.json';
@@ -15,7 +16,23 @@ type CommitItem = {
   files: number | null;
   additions: number | null;
   deletions: number | null;
+  explanation: string; // Add explanation field
+  date?: string; // ISO 8601 commit time
 };
+
+// 把 ISO 时间格式化为友好显示（本地时区）
+function formatCommitTime(iso?: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleString('zh-CN', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+}
 
 type DayUpdate = {
   count: number;
@@ -68,7 +85,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 时间线：贯穿整页的竖导轨 + 每日节点 + 卡片 */}
+      {/* 背景时间线，贯穿整页的竖导轨 + 每日节点 + 卡片 */}
       <div className="relative mt-8">
         {/* 竖导轨 */}
         <span className="pointer-events-none absolute left-[15px] top-3 bottom-3 w-px bg-kumo-line" aria-hidden />
@@ -81,20 +98,14 @@ function HomePage() {
               <section key={date} className="relative scroll-mt-24 pl-11">
                 {/* 节点圆点：落在导轨上，ring 制造穿越切口 */}
                 <span
-                  className={
-                    'absolute left-[8px] top-[7px] h-3.5 w-3.5 rounded-full ring-4 ring-kumo-base ' +
-                    (isLatest ? 'bg-kumo-brand' : 'bg-kumo-base ring-1 ring-kumo-line')
-                  }
+                  className={`absolute left-[8px] top-[7px] h-3.5 w-3.5 rounded-full ring-4 ring-kumo-base ${isLatest ? 'bg-kumo-brand' : 'bg-kumo-base ring-1 ring-kumo-line'}`}
                   aria-hidden
                 />
 
                 {/* 日期节点标签 */}
-                <div className="mb-3 flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={
-                      'inline-flex h-7 items-center rounded-full px-3 font-mono text-sm font-semibold ' +
-                      (isLatest ? 'bg-kumo-brand text-white' : 'bg-kumo-fill text-kumo-strong')
-                    }
+                    className={`inline-flex h-7 items-center rounded-full px-3 font-mono text-sm font-semibold ${isLatest ? 'bg-kumo-brand text-white' : 'bg-kumo-fill text-kumo-strong'}`}
                   >
                     {date}
                   </span>
@@ -118,6 +129,7 @@ function HomePage() {
                         ) : (
                           <Badge variant="outline">commit</Badge>
                         )}
+
                         <Link
                           href={commitUrl(c.sha)}
                           target="_blank"
@@ -128,8 +140,14 @@ function HomePage() {
                           {c.sha}
                         </Link>
                         <span className="text-xs text-[var(--sea-ink-soft)]">· {c.author}</span>
+                        {c.date && (
+                          <span className="text-xs font-mono text-[var(--sea-ink-soft)]">
+                            · {formatCommitTime(c.date)}
+                          </span>
+                        )}
                       </div>
 
+                      {/* 显示原文标题和中文解读 */}
                       <Text variant="body" className="!text-[15px] !leading-relaxed">
                         {c.summary}
                       </Text>
@@ -137,6 +155,16 @@ function HomePage() {
                       <Text variant="secondary" size="xs" className="mt-1">
                         原文标题：{c.title}
                       </Text>
+
+                      {/* 显示中文解读区块 */}
+                      <div className="mt-2 rounded border border-kumo-fill bg-kumo-fill/5 p-2 text-sm">
+                        <Text variant="subtitle" className="font-medium">
+                          中文标题解读：
+                        </Text>
+                        <Text variant="body" className="mt-1" copyable={c.explanation}>
+                          {c.explanation}
+                        </Text>
+                      </div>
 
                       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--sea-ink-soft)]">
                         <span>{c.files ?? 0} 文件</span>
