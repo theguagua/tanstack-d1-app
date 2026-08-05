@@ -20,12 +20,15 @@ type CommitItem = {
   date?: string; // ISO 8601 commit time
 };
 
-// 把 ISO 时间格式化为友好显示（本地时区）
+// 把 ISO 提交时间格式化为友好显示。
+// 固定用北京时间(Asia/Shanghai)渲染，与 updates.json 的分组日期(北京日期)保持一致，
+// 避免不同浏览者本地时区导致的「分组日期 ≠ 卡片时钟日期」不一致。
 function formatCommitTime(iso?: string): string {
   if (!iso) return '';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
   return d.toLocaleString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
