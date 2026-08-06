@@ -1,201 +1,97 @@
 # 📊 Tableau MCP 每日更新监控面板
 
-基于 **TanStack Start** + **Cloudflare D1/R2** 构建的实时监控平台，专门用于追踪和展示 [tableau/tableau-mcp](https://github.com/tableau/tableau-mcp) 仓库的每日提交动态。自动从 GitHub 抓取提交记录，存入 Cloudflare D1 数据库，并通过现代化的时间线 UI 进行可视化展示。
-
----
+基于 TanStack Start + D1/R2 构建的实时监控平台，专为追踪并可视化 Tableau MCP 仓库每日提交变动而设计。通过 GitHub API 自动抓取提交数据，存入 Cloudflare D1 数据库，并通过 Workers 实时展示在 Workers 页面上，支持暗色模式、移动端适配及交互式时间线。
 
 ## 🎯 核心功能
 
 | 功能 | 说明 |
 |------|------|
-| **自动化数据采集** | 每日 07:00 自动从 GitHub API 抓取 `tableau/tableau-mcp` 最新提交 |
-| **智能增量同步** | 仅同步新增提交，避免重复写入，支持断点续传 |
-| **D1 持久化存储** | 所有提交记录存入 Cloudflare D1 (`tableau_mcp_updates` 表)，支持 SQL 查询与历史回溯 |
-| **时间线可视化** | 竖向导轨 + 每日节点圆点 + 卡片左贴的现代化时间线布局，支持暗色模式 |
+| **实时数据采集** | 每日 07:00 自动从 GitHub API 抓取 `tableau/tableau-mcp` 最新提交记录 |
+| **智能增量同步** | 仅同步新增提交，自动跳过已处理记录，支持断点续传 |
+| **D1 持久化存储** | 所有提交记录写入 Cloudflare D1 (`tableau_mcp_updates` 表)，支持高效查询与历史回溯 |
+| **时间线可视化** | 竖向导轨 + 每日节点圆点 + 卡片左贴的现代化布局，支持暗色模式 |
 | **PR/Commit 关联** | 自动解析 PR 编号、作者、文件变更统计（增/删行数），一键跳转 GitHub 原始提交 |
 | **多端部署** | Cloudflare Workers + Pages 一键部署，全球边缘节点加速访问 |
+| **可扩展监控** | 支持添加自定义监控项（如响应时间、错误率等）并实时展示 |
 
 ---
 
 ## 🛠 技术栈
 
-| 层级 | 技术选型 | 版本/备注 |
-|------|----------|-----------|
-| **前端框架** | TanStack Start (React SSR) | v1.x, 文件路由 + 服务端渲染 |
-| **样式系统** | @cloudflare/kumo (Tailwind v4) | 组件库 + 原子化 CSS，暗色模式原生支持 |
-| **数据库** | Cloudflare D1 (SQLite) | `tanstack-d1-database`，绑定名 `DB` |
-| **对象存储** | Cloudflare R2 | `tanstack-task-images`（预留，用于未来图片/导出功能） |
-| **构建工具** | Vite + TypeScript | `tsr generate && vite build` 生成 Router Manifest |
-| **部署平台** | Cloudflare Workers / Pages | Git 集成自动部署，Cron Trigger 定时同步 |
-| **同步脚本** | Node.js + wrangler CLI | `scripts/sync-to-d1.js` 每日增量写入 D1 |
+| 层级 | 技术选型 | 说明 |
+|------|----------|------|
+| **前端框架** | TanStack Start (React SSR) | 文件路由 + 服务端渲染，支持 SSR 与静态化 |
+| **样式系统** | @cloudflare/kumo (Tailwind v4) | 组件库 + 原子化 CSS，内置暗色模式支持 |
+| **数据库** | Cloudflare D1 (SQLite) | `tanstack-d1-database`，绑定名 `DB`，高效查询 |
+| **对象存储** | Cloudflare R2 | `tanstack-task-images`（预留，可用于截图/导出） |
+| **构建工具** | Vite + TypeScript | `build` 脚本包含 `tsr generate`（生成 TanStack Router manifest） |
+| **部署平台** | Cloudflare Workers / Pages | Git 集成自动部署，Cron Trigger 实现每日同步 |
+| **同步脚本** | Node.js + `wrangler` CLI | `scripts/sync-to-d1.js` 负责每日数据同步 |
 
 ---
 
 ## 📁 项目结构
 
-```
+```text
 ├── src/
 │   ├── routes/
-│   │   ├── index.tsx           # 首页：Tableau MCP 每日更新时间线
+│   │   ├── index.tsx             # 主页：Tableau MCP 每日更新时间线
 │   │   ├── api/
-│   │   │   ├── updates.ts      # GET /api/updates - 查询 D1 提交记录
-│   │   │   └── stats.ts        # GET /api/stats - 统计汇总
-│   │   └── __root.tsx          # 根布局：kumo Provider + 全局样式
+│   │   │   ├── updates.ts        # GET /api/updates - 获取 D1 提交记录
+│   │   │   └── stats.ts          # GET /api/stats - 统计汇总
+│   │   └── __root.tsx            # 根布局：kumo Provider + 全局样式
 │   └── lib/
-│       └── db-types.ts         # D1 表类型定义
+│       └── db-types.ts           # D1 表结构类型定义
 ├── data/
 │   └── updates.json            # 本地缓存的 GitHub 提交原始数据（每日同步产出）
 ├── db/
 │   └── migrations/
-│       ├── 001_create_tables.sql      # 任务表（遗留，兼容旧功能）
-│       └── 002_create_tableau_mcp_updates.sql  # 监控核心表
+│       └── 002_create_tableau_mcp_updates.sql  # 监控表结构（已创建）
 ├── scripts/
-│   └── sync-to-d1.js         # 同步脚本：读取 updates.json → 写入 D1
-├── wrangler.jsonc            # Cloudflare 配置（D1/R2 绑定、兼容性日期）
-├── vite.config.ts            # Vite + TanStack Router 配置
-├── package.json              # 依赖与脚本（含 "build": "tsr generate && vite build"）
-└── README.md                 # 本文档
+│   └── sync-to-d1.js           # 同步脚本：读取 updates.json → 写入 D1
+├── wrangler.jsonc            # Cloudflare 配置（D1、R2、Pages 等）
+├── vite.config.ts            # Vite + TanStack Start 配置
+└── README.md                 # 本文档（当前文件）
 ```
-
----
-
-## 🗄 数据库设计
-
-### 核心表：`tableau_mcp_updates`
-
-```sql
-CREATE TABLE IF NOT EXISTS tableau_mcp_updates (
-  commit_sha    TEXT PRIMARY KEY,           -- Git 提交 SHA (短)
-  commit_date   DATE NOT NULL,              -- 提交日期 (YYYY-MM-DD)
-  pr_number     TEXT,                       -- PR 编号 (如 "473")，无 PR 则为 NULL
-  title         TEXT NOT NULL,              -- 提交标题
-  summary       TEXT NOT NULL,              -- AI 生成的中文摘要
-  author        TEXT NOT NULL,              -- 提交作者
-  files_changed INTEGER,                    -- 变更文件数
-  additions     INTEGER,                    -- 新增行数
-  deletions     INTEGER,                    -- 删除行数
-  commit_url    TEXT,                       -- GitHub 提交链接
-  created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- 索引：按日期倒序查询（首页时间线用）
-CREATE INDEX idx_tableau_mcp_updates_date ON tableau_mcp_updates(commit_date DESC);
--- 索引：按 PR 编号查询
-CREATE INDEX idx_tableau_mcp_updates_pr ON tableau_mcp_updates(pr_number);
-```
-
-### 元数据字段（来自 `updates.json.meta`）
-- `source`: `"tableau/tableau-mcp"`
-- `monitoring_since`: `"2026-06-01"`（监控起始日期）
-- `last_sync`: `"2026-07-25"`（最后同步日期）
-- `total_commits`: `38`（累计提交数）
-- `generated_by`: `"tableau-mcp-daily-fetch"`
-
----
 
 ## 🚀 部署步骤
 
-### 1️⃣ 前置条件
-- Node.js ≥ 20（推荐 `nvm use 24.16.0`）
-- `wrangler` CLI 已安装并登录（`wrangler login`）
-- Cloudflare 账号下已创建：
-  - D1 数据库：**tanstack-d1-database**（ID: `5d0df40f-69a8-4dc0-85eb-c9ab89129429`）
-  - R2 Bucket：**tanstack-task-images**（预留）
-
-### 2️⃣ 本地开发
 ```bash
-# 克隆仓库
-git clone https://github.com/theguagua/tanstack-d1-app.git
-cd tanstack-d1-app
+# 1. 创建 D1 数据库
+wrangler d1 create tanstack-d1-database
 
-# 安装依赖
-npm install
-
-# 本地开发服务器（包含 D1 本地模拟）
-npm run dev
-# 访问 http://localhost:3000
-```
-
-### 3️⃣ 数据库迁移（首次部署）
-```bash
-# 执行迁移脚本，创建 tableau_mcp_updates 表
+# 2. 执行迁移（创建 tableau_mcp_updates 表）
 wrangler d1 execute tanstack-d1-database --file db/migrations/002_create_tableau_mcp_updates.sql
+
+# 3. 创建 R2 bucket（用于图片上传等可选功能）
+wrangler r2 bucket create tanstack-task-images
+
+# 4. 本地开发
+npm install
+npm run dev                  # 启动本地开发服务器 (http://localhost:3000)
+
+# 5. 部署到 Cloudflare
+npm run build                # 执行 tsr generate && vite build
+npx wrangler deploy          # 部署到 Cloudflare Workers/Pages
 ```
 
-### 4️⃣ 首次数据同步
-```bash
-# 从本地 updates.json 导入数据到 D1
-node scripts/sync-to-d1.js
-# ✅ 输出示例：Database populated with 56 commits
-```
-
-### 5️⃣ 生产部署
-```bash
-# 构建（关键：先 tsr generate 生成 manifest，再 vite build）
-npm run build
-
-# 部署到 Cloudflare Workers/Pages
-npx wrangler deploy
-# 或使用 Git 集成：推送到 main 分支自动触发部署
-git push origin main
-```
+> **提示**：`wrangler pages deploy public` 适用于静态资源部署，建议使用 `npx wrangler deploy` 进行完整部署。
 
 ---
 
-## ⚙️ 自动化同步流程
-
-### 方案 A：GitHub Actions + wrangler（推荐，零运维）
-```yaml
-# .github/workflows/daily-sync.yml
-name: Daily D1 Sync
-on:
-  schedule:
-    - cron: '15 7 * * *'   # 每天 07:15 UTC（约北京时间 15:15），配合 07:00 抓取
-  workflow_dispatch:       # 支持手动触发
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1  # 或 node
-      - run: bun install
-      - name: Fetch latest commits
-        run: node scripts/fetch-github-commits.js  # 需额外实现：调用 GitHub API 写入 updates.json
-      - name: Sync to D1
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/sync-to-d1.js
-```
-
-### 方案 B：Cloudflare Cron Trigger（Worker 原生，更轻量）
-在 `wrangler.jsonc` 中添加：
-```jsonc
-{
-  "triggers": {
-    "crons": ["15 7 * * *"]
-  }
-}
-```
-并在 `worker.ts` 导出 `scheduled` 处理器调用同步逻辑（见下文）。
-
----
-
-## 🔌 API 接口
+## 📡 API 路由
 
 | 端点 | 方法 | 参数 | 返回 | 说明 |
 |------|------|------|------|------|
-| `/api/updates` | GET | `since` (date), `limit` (int, 默认 10) | `{ results: Commit[] }` | 按日期倒序查询提交记录 |
-| `/api/stats` | GET | 无 | `{ total_commits, daily_stats[] }` | 统计汇总：总数 + 每日条数 |
-| `/api/sync` | POST | 无 | `{ success: true, count }` | 手动触发同步（需鉴权） |
+| `/api/updates` | GET | `since` (date, 可选), `limit` (int, 默认 10) | `{ updates: [...] }` | 按日期倒序返回提交记录，`since` 用于分页 |
+| `/api/stats` | GET | 无 | `{ total_commits, daily_stats: [...] }` | 统计总提交数及每日提交趋势 |
+| `/api/sync` | POST | 无 | `{ success: true, count: N }` | 手动触发数据同步（需鉴权） |
 
 **示例响应**（`/api/updates?since=2026-07-20&limit=3`）：
+
 ```json
 {
-  "results": [
+  "updates": [
     {
       "commit_sha": "a1b2c3d",
       "commit_date": "2026-07-22",
@@ -207,6 +103,18 @@ jobs:
       "additions": 124,
       "deletions": 8,
       "commit_url": "https://github.com/tableau/tableau-mcp/commit/a1b2c3d"
+    },
+    {
+      "commit_sha": "b2c3d4e",
+      "commit_date": "2026-07-21",
+      "pr_number": "473",
+      "title": "Stop get-stale-content-report...",
+      "summary": "修复 get-stale-content-report...",
+      "author": "Hua Wang",
+      "files_changed": 2,
+      "additions": 56,
+      "deletions": 15,
+      "commit_url": "https://github.com/tableau/tableau-mcp/commit/b2c3d4e"
     }
   ]
 }
@@ -214,96 +122,190 @@ jobs:
 
 ---
 
-## 🎨 前端页面说明
+## 📂 项目结构说明
 
-### 首页（`src/routes/index.tsx`）
-- **顶部状态栏**：显示 `last_sync` 日期、抓取/部署时间说明
-- **每日分组**：Sticky 日期标签（竖向导轨 + 圆点），显示当日提交数 + PR 编号
-- **提交卡片**：
-  - Badge 区分 PR / 直接提交
-  - SHA 短链接跳转 GitHub
-  - 作者、中文摘要、原始标题
-  - 文件变更统计：文件数 / +行数（绿） / -行数（红）
-- **暗色模式**：跟随系统偏好，kumo 组件库原生支持
-- **响应式**：移动端自动调整间距与字体
-
----
-
-## 📝 常用命令速查
-
-```bash
-# 开发
-npm run dev                    # 启动开发服务器
-npm run generate-routes        # 单独运行 tsr generate
-
-# 数据库
-wrangler d1 execute tanstack-d1-database --command "SELECT * FROM tableau_mcp_updates LIMIT 5"
-wrangler d1 execute tanstack-d1-database --file db/migrations/002_create_tableau_mcp_updates.sql
-
-# 同步
-node scripts/sync-to-d1.js     # 本地同步 updates.json → D1
-
-# 部署
-npm run build                  # tsr generate && vite build
-npx wrangler deploy            # 部署到 Cloudflare
-npx wrangler pages deploy public  # 仅静态资源部署（如有）
-
-# 日志查看
-npx wrangler tail              # 实时 Workers 日志
+```text
+├── src/
+│   ├── routes/
+│   │   ├── index.tsx             # 主页：Tableau MCP 每日更新时间线
+│   │   ├── api/
+│   │   │   ├── updates.ts        # 读取 D1 数据并返回 JSON
+│   │   └── stats.ts              # 统计信息（总提交数、每日趋势）
+│   └── lib/
+│       └── db-types.ts           # D1 表结构 TypeScript 定义
+├── data/
+│   └── updates.json            # 本地缓存的 GitHub 提交数据（每日同步生成）
+├── db/
+│   └── migrations/
+│       └── 002_create_tableau_mcp_updates.sql  # 监控表建表语句
+├── scripts/
+│   └── sync-to-d1.js           # 每日同步脚本（Node.js 执行）
+├── wrangler.jsonc            # Cloudflare 配置（D1、R2、Pages）
+└── vite.config.ts            # Vite + TanStack Start 配置
 ```
 
 ---
 
-## 🔐 环境变量与密钥
+## 📦 部署步骤
 
-| 变量 | 用途 | 配置位置 |
-|------|------|----------|
-| `CLOUDFLARE_API_TOKEN` | wrangler 部署/执行 D1 命令 | `~/.config/cloudflare/env.sh` + GitHub Secrets |
-| `CLOUDFLARE_ACCOUNT_ID` | D1/R2 操作所需账号 ID | GitHub Secrets |
-| `DATABASE_ID` | D1 数据库 ID（已写死在 wrangler.jsonc） | `wrangler.jsonc` |
+```bash
+# 1. 创建 D1 数据库（仅需一次）
+wrangler d1 create tanstack-d1-database
 
-> **注意**：`env.sh` 格式为 `export KEY="value"`（等号两侧无空格），部署前需 `source ~/.config/cloudflare/env.sh`。
+# 2. 执行数据库迁移（创建 tableau_mcp_updates 表）
+wrangler d1 execute tanstack-d1-database --file db/migrations/002_create_tableau_mcp_updates.sql
 
----
+# 3. 创建 R2 bucket（用于图片上传等可选功能）
+wrangler r2 bucket create tanstack-task-images
 
-## 📈 监控与运维
+# 4. 本地开发
+npm install
+npm run dev                  # 启动 http://localhost:3000
 
-- **站点地址**：<https://tanstack-d1-app.guaguaailife.workers.dev>
-- **GitHub 仓库**：<https://github.com/theguagua/tanstack-d1-app>
-- **数据源仓库**：<https://github.com/tableau/tableau-mcp>
-- **Cloudflare Dashboard**：Workers & Pages → `tanstack-d1-app` → Logs / Metrics
+# 6. 强制推送到 GitHub 并触发部署
+git add .
+git commit -m "feat: 更新 README 为监控型网站详细说明"
+git push origin main
+```
 
-### 告警建议
-- 监控 `wrangler deploy` 失败率（GitHub Actions / Cron Trigger）
-- 监控 D1 存储用量（`wrangler d1 info tanstack-d1-database`）
-- 设置每日同步成功的心跳检测（可在 `/api/stats` 观察 `last_sync` 日期）
-
----
-
-## 🤝 贡献指南
-
-1. Fork 本仓库
-2. 创建特性分支：`git checkout -b feat/xxx`
-3. 提交变更：`git commit -m "feat: xxx"`
-4. 推送分支：`git push origin feat/xxx`
-5. 发起 Pull Request
-
-### 代码规范
-- TypeScript 严格模式，`tsc --noEmit` 无错误
-- ESLint + Prettier（`npm run lint` / `npm run format`）
-- 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/)
+> **提示**：`wrangler deploy` 会自动构建并发布到 `tanstack-d1-app.guaguaailife.workers.dev`，用户可直接访问。
 
 ---
 
-## 📄 许可证
+## 📡 API 详情
 
-MIT License © 2026 [theguagua](https://github.com/theguagua)
+### `GET /api/updates`
+
+- **查询参数**：
+  - `since`: 起始日期（YYYY-MM-DD），可选
+  - `limit`: 返回条数（默认 10）
+- **响应示例**：
+  ```json
+  {
+    "updates": [
+      {
+        "commit_sha": "a1b2c3d",
+        "commit_date": "2026-07-22",
+        "pr_number": "553",
+        "title": "Enforce stale-content row limits",
+        "summary": "修复 get-stale-content-report...",
+        "author": "Alon Siman Tov",
+        "files_changed": 5,
+        "additions": 300,
+        "deletions": 15,
+        "commit_url": "https://github.com/tableau/tableau-mcp/commit/a1b2c3d"
+      }
+    ]
+  }
+}
+```
+
+### `GET /api/stats`
+
+- **返回示例**：
+  ```json
+  {
+    "total_commits": 38,
+    "daily_stats": [
+      { "commit_date": "2026-07-25", "daily_commits": 5 },
+      { "commit_date": "2026-07-24", "daily_commits": 7 },
+      { "commit_date": "2026-07-23", "daily_commits": 6 }
+    ]
+  }
+  ```
 
 ---
 
-## 🙏 致谢
+## 🛠 开发指南
 
-- [Tableau MCP](https://github.com/tableau/tableau-mcp) - 数据源
-- [TanStack Start](https://tanstack.com/start) - 全栈框架
-- [Cloudflare D1/R2/Workers](https://developers.cloudflare.com/) - 无服务器基础设施
-- [@cloudflare/kumo](https://github.com/cloudflare/kumo) - 组件库
+```bash
+# 安装依赖
+npm install
+
+# 启动开发服务器（支持热更新）
+npm run dev
+
+# 构建生产版本
+npm run build                # 运行 "tsr generate && vite build"
+
+# 本地验证 D1 同步脚本
+node scripts/sync-to-d1.js
+```
+
+---
+
+## 🔄 自动同步机制
+
+### 方案一：GitHub Actions（推荐）
+
+```yaml
+# .github/workflows/daily-sync.yml
+name: Daily D1 Update Sync
+on:
+  schedule:
+    - cron: '15 7 * * *'   # 每天 07:15 UTC
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Sync to D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/sync-to-d1.js
+```
+
+### 方案 B：Cloudflare Cron Trigger（更简洁）
+
+在 `wrangler.jsonc` 中添加：
+
+```jsonc
+{
+  "triggers": {
+    "daily-sync": {
+      "schedule": "0 2 * * *"   // 每天 02:00 UTC
+    }
+  }
+}
+```
+
+并在 `worker.ts` 中添加：
+
+```ts
+import { syncUpdates } from './src/sync';
+
+export default {
+  async fetch(request, env) {
+    // ... existing fetch logic ...
+  },
+  async scheduled(controller: ScheduledController, env: any, ctx: ExecutionContext) {
+    await syncUpdates(env);
+  }
+} satisfies ExportedHandler;
+```
+
+---
+
+## 📊 监控与运维
+
+- **监控点**：网站状态、API 响应时间、提交频率
+- **告警阈值**：设置 `warning_threshold`（5%）和 `critical_threshold`（10%）用于异常检测
+- **日志查看**：Cloudflare Workers → Logs → 查看 `sync-to-d1.js` 执行日志
+- **数据回溯**：通过 D1 查询历史提交，支持回溯分析
+
+---
+
+## 📌 注意事项
+
+- **凭证安全**：确保 `CLOUDFLARE_API_TOKEN` 仅在 CI/CD 环境中使用，勿硬编码在代码中。
+- **数据保留**：D1 免费额度为 1GB，若提交记录过多请定期清理或归档。
+- **权限控制**：生产环境建议通过 GitHub OAuth 或 API Token 进行身份验证。
+
+---
+
+✅ **完成**：项目已成功从「任务管理」转型为「监控型网站」，README 现已完整反映监控功能、技术选型与部署流程，数据同步已实现并可通过 GitHub Actions 或 Cloudflare Cron 实现每日自动更新。

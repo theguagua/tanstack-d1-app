@@ -7,7 +7,6 @@
   "assets": {
     "directory": "dist/client"
   },
-
   "d1_databases": [
     {
       "binding": "DB",
@@ -20,5 +19,8 @@
       "binding": "R2_BUCKET",
       "bucket_name": "tanstack-task-images"
     }
-  ]
+  ],
+  "triggers": {
+    "scheduled": "0 2 * * *"
+  }
 }

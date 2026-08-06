@@ -2,11 +2,42 @@
   "meta": {
     "source": "github.com/tableau/tableau-mcp",
     "monitoring_since": "2026-06-01",
-    "last_sync": "2026-08-05",
-    "total_commits": 97,
-    "generated_by": "Hermes Agent Auto Explanation (2026-08-05 Beijing-time regroup)"
+    "last_sync": "2026-08-06",
+    "total_commits": 99,
+    "generated_by": "Hermes Agent Auto Explanation (2026-08-06 Beijing-time regroup)"
   },
   "updates": {
+    "2026-08-06": {
+      "count": 2,
+      "prs": [
+        "566",
+        "715"
+      ],
+      "commits": [
+        {
+          "sha": "63e52e07",
+          "pr": "715",
+          "title": "@W-23710773: Add fullscreen toggle button to embedded Tableau viz MCP app (#715)",
+          "summary": "#715 为嵌入式 Tableau 可视化 MCP 应用新增全屏切换按钮，支持嵌入视图一键切换全屏/常规窗口显示。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-05T17:53:30-04:00"
+        },
+        {
+          "sha": "249d5f56",
+          "pr": "566",
+          "title": "Fix misleading 'Pulse not available on Tableau Server' error on Cloud (#566)",
+          "summary": "#566 修复 Cloud 环境下误导性的“Pulse not available on Tableau Server”错误提示（基于标题概述）。",
+          "author": "dplatt84",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-05T12:41:19-07:00"
+        }
+      ]
+    },
     "2026-08-05": {
       "count": 2,
       "prs": [
