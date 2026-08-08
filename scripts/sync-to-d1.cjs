@@ -15,9 +15,14 @@ function loadUpdates() {
 }
 
 // 执行 D1 SQL 命令
+// 优先用本地安装的 wrangler（npm ci / npm install 后存在于 node_modules/.bin），
+// 否则退回全局 PATH 里的 wrangler —— 兼容 GitHub Actions 与本地环境。
+const WRANGLER_BIN = require('fs').existsSync(path.join(__dirname, '..', 'node_modules', '.bin', 'wrangler'))
+  ? path.join(__dirname, '..', 'node_modules', '.bin', 'wrangler')
+  : 'wrangler';
 function execD1(sql, params = []) {
   const paramStr = params.length > 0 ? `--args ${params.map(p => JSON.stringify(p)).join(' ')}` : '';
-  const cmd = `wrangler d1 execute ${D1_DATABASE_NAME} --command "${sql}" ${paramStr} --json`;
+  const cmd = `${WRANGLER_BIN} d1 execute ${D1_DATABASE_NAME} --command "${sql}" ${paramStr} --json`;
   try {
     const output = execSync(cmd, { encoding: 'utf8', stdio: 'pipe' });
     return JSON.parse(output);
