@@ -2,11 +2,44 @@
   "meta": {
     "source": "github.com/tableau/tableau-mcp",
     "monitoring_since": "2026-06-01",
-    "last_sync": "2026-08-06",
-    "total_commits": 99,
+    "last_sync": "2026-08-08",
+    "total_commits": 101,
     "generated_by": "Hermes Agent Auto Explanation (2026-08-06 Beijing-time regroup)"
   },
   "updates": {
+    "2026-08-08": {
+      "count": 2,
+      "prs": [
+        "731",
+        "724"
+      ],
+      "commits": [
+        {
+          "sha": "8e516660",
+          "pr": "731",
+          "title": "@W-12345678 modified metadata enhancement for getView tool to show upstream data … (#731)",
+          "summary": "#731 增强 getView 工具的元数据，使其展示上游数据（基于标题概述）。",
+          "author": "Joey Constantino",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-07T12:14:25-07:00",
+          "explanation": "增强 getView 工具的元数据输出：支持在仪表板场景展示上游数据源信息，而不只局限于单个 viz 视图；同时做了版本号 bump。"
+        },
+        {
+          "sha": "0406652d",
+          "pr": "724",
+          "title": "@W-23710773 Display error cause in MCP app error card (#724)",
+          "summary": "#724 在 MCP 应用错误卡片中显示错误原因，便于用户快速定位问题。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-07T14:56:28-04:00",
+          "explanation": "在 MCP 应用错误卡片中展示错误底层原因（cause）：以通用错误消息下方的次要灰字行呈现（此前只发往遥测）；用 textContent 渲染非可信文本（不用 innerHTML），cause 为空/纯空白时自动隐藏；版本升至 4.3.0。"
+        }
+      ]
+    },
     "2026-08-06": {
       "count": 2,
       "prs": [
@@ -23,7 +56,8 @@
           "files": null,
           "additions": null,
           "deletions": null,
-          "date": "2026-08-05T17:53:30-04:00"
+          "date": "2026-08-05T17:53:30-04:00",
+          "explanation": "为嵌入式 Tableau viz MCP 应用 UI 新增全屏切换按钮：通过 ext-apps requestDisplayMode API 在 inline/fullscreen 两种显示模式间切换（非浏览器 Fullscreen API）；用闭包变量与 hostcontextchanged 事件同步当前模式，保证反复进出全屏后按钮状态仍正确；Esc 可退出全屏，按钮渲染在嵌入区右侧。"
         },
         {
           "sha": "249d5f56",
@@ -34,7 +68,8 @@
           "files": null,
           "additions": null,
           "deletions": null,
-          "date": "2026-08-05T12:41:19-07:00"
+          "date": "2026-08-05T12:41:19-07:00",
+          "explanation": "修复 Cloud 环境下误导性的“Pulse not available on Tableau Server”错误：原处理器把所有 404 一律当成本地 Server 不支持 Pulse，但 Tableau Cloud 的 404 常是真实 Pulse API 错误（定义、数据源或指标未找到）且响应体带错误码。现在先检查 404 响应是否含错误码：有则转入 PulseInsightsApiError 处理器展示真实错误与操作指引，只有裸 404（无错误码）才按 Pulse 不可用处理。"
         }
       ]
     },
