@@ -1,32 +1,36 @@
 # 📊 Tableau MCP 每日更新监控面板
 
-基于 TanStack Start + D1/R2 构建的实时监控平台，专为追踪并可视化 Tableau MCP 仓库每日提交变动而设计。通过 GitHub API 自动抓取提交数据，存入 Cloudflare D1 数据库，并通过 Workers 实时展示在 Workers 页面上，支持暗色模式、移动端适配及交互式时间线。
+追踪并可视化 [tableau/tableau-mcp](https://github.com/tableau/tableau-mcp) 仓库每日提交变动的监控面板。每天自动从 **官方 GitHub 仓库** 抓取最新 commits，由 LLM 生成中文解读，存入 **Cloudflare D1** 作为权威数据源，并通过 Cloudflare Workers 部署展示。
+
+线上地址：https://tanstack-d1-app.guaguaailife.workers.dev
+
+---
 
 ## 🎯 核心功能
 
 | 功能 | 说明 |
 |------|------|
-| **实时数据采集** | 每日 07:00 自动从 GitHub API 抓取 `tableau/tableau-mcp` 最新提交记录 |
-| **智能增量同步** | 仅同步新增提交，自动跳过已处理记录，支持断点续传 |
-| **D1 持久化存储** | 所有提交记录写入 Cloudflare D1 (`tableau_mcp_updates` 表)，支持高效查询与历史回溯 |
-| **时间线可视化** | 竖向导轨 + 每日节点圆点 + 卡片左贴的现代化布局，支持暗色模式 |
-| **PR/Commit 关联** | 自动解析 PR 编号、作者、文件变更统计（增/删行数），一键跳转 GitHub 原始提交 |
-| **多端部署** | Cloudflare Workers + Pages 一键部署，全球边缘节点加速访问 |
-| **可扩展监控** | 支持添加自定义监控项（如响应时间、错误率等）并实时展示 |
+| **每日自动抓取** | 每天 07:00 由定时任务从官方仓库 `tableau/tableau-mcp` 拉取最近 commits（以 HEAD sha 判定是否有新内容） |
+| **中文解读** | 每条 commit 由 LLM 生成 `summary`（一句话总结）+ `explanation`（中文标题解读），写入数据文件 |
+| **D1 权威存储** | 所有记录写入 Cloudflare D1（`tableau_mcp_updates` 表），网站以 D1 为准；每次同步后校验 D1 与本地数据一致 |
+| **北京时间分组** | commit 按提交时间转换为北京时间（Asia/Shanghai）的日期分组，网页固定用北京时间展示 |
+| **时间线可视化** | 竖向导轨 + 每日节点 + 卡片布局，支持暗色模式、移动端适配 |
+| **PR / Commit 关联** | 自动解析 PR 编号、作者，一键跳转 GitHub 原始提交 |
 
 ---
 
 ## 🛠 技术栈
 
-| 层级 | 技术选型 | 说明 |
-|------|----------|------|
-| **前端框架** | TanStack Start (React SSR) | 文件路由 + 服务端渲染，支持 SSR 与静态化 |
-| **样式系统** | @cloudflare/kumo (Tailwind v4) | 组件库 + 原子化 CSS，内置暗色模式支持 |
-| **数据库** | Cloudflare D1 (SQLite) | `tanstack-d1-database`，绑定名 `DB`，高效查询 |
-| **对象存储** | Cloudflare R2 | `tanstack-task-images`（预留，可用于截图/导出） |
-| **构建工具** | Vite + TypeScript | `build` 脚本包含 `tsr generate`（生成 TanStack Router manifest） |
-| **部署平台** | Cloudflare Workers / Pages | Git 集成自动部署，Cron Trigger 实现每日同步 |
-| **同步脚本** | Node.js + `wrangler` CLI | `scripts/sync-to-d1.js` 负责每日数据同步 |
+| 层级 | 技术选型 |
+|------|----------|
+| 前端框架 | TanStack Start (React) + 文件路由 |
+| 样式系统 | @cloudflare/kumo (Tailwind v4) |
+| 数据库 | Cloudflare D1 (SQLite)，库名 `tanstack-d1-database`，绑定名 `DB` |
+| 对象存储 | Cloudflare R2 `tanstack-task-images`（预留） |
+| 构建 | Vite + TypeScript（`npm run build` = `tsr generate && vite build`） |
+| 部署 | Cloudflare Workers（`wrangler deploy`） |
+| 数据同步 | Cloudflare D1 REST API（Python 脚本，见下） |
+| 调度 | Hermes Agent cron（见「自动同步机制」） |
 
 ---
 
@@ -35,86 +39,75 @@
 ```text
 ├── src/
 │   ├── routes/
-│   │   ├── index.tsx             # 主页：Tableau MCP 每日更新时间线
+│   │   ├── index.tsx             # 主页：时间线（构建时烘焙 updates.json 作展示）
 │   │   ├── api/
-│   │   │   ├── updates.ts        # GET /api/updates - 获取 D1 提交记录
+│   │   │   ├── updates.ts        # GET /api/updates - 实时读 D1 返回提交记录
 │   │   │   └── stats.ts          # GET /api/stats - 统计汇总
-│   │   └── __root.tsx            # 根布局：kumo Provider + 全局样式
-│   └── lib/
-│       └── db-types.ts           # D1 表结构类型定义
+│   │   └── __root.tsx            # 根布局
+│   ├── sync.ts                   # Worker 内 D1 建表/灌入逻辑（mainSync）
+│   └── lib/db-types.ts           # D1 表结构类型
 ├── data/
-│   └── updates.json            # 本地缓存的 GitHub 提交原始数据（每日同步产出）
-├── db/
-│   └── migrations/
-│       └── 002_create_tableau_mcp_updates.sql  # 监控表结构（已创建）
+│   └── updates.json              # 本地数据草稿（含中文 summary/explanation），灌 D1 的输入
+├── db/migrations/                # 建表 SQL（D1 实际由脚本/Worker 自动建）
 ├── scripts/
-│   └── sync-to-d1.js           # 同步脚本：读取 updates.json → 写入 D1
-├── wrangler.jsonc            # Cloudflare 配置（D1、R2、Pages 等）
-├── vite.config.ts            # Vite + TanStack Start 配置
-└── README.md                 # 本文档（当前文件）
+│   └── sync-to-d1.cjs            # 旧同步脚本（依赖 wrangler，本地 macOS 无法运行，保留备用）
+├── worker.ts                     # Worker 入口：路由 /api/* + 委托 TanStack 应用
+├── wrangler.jsonc                # Cloudflare 配置（D1、R2、Cron Trigger）
+└── README.md
 ```
 
-## 🚀 部署步骤
+> ⚠️ **数据源 vs 部署源**
+> - **数据源（抓取）**：官方仓库 `https://github.com/tableau/tableau-mcp.git`
+> - **部署源（本仓库）**：`https://github.com/theguagua/tanstack-d1-app.git`（fork，仅承载代码）
+>
+> 两者不同。抓取脚本 clone 的是官方仓库，确保不漏官方更新；本仓库只负责部署站点代码。
+
+---
+
+## 🚀 本地开发 & 部署
 
 ```bash
-# 1. 创建 D1 数据库
-wrangler d1 create tanstack-d1-database
-
-# 2. 执行迁移（创建 tableau_mcp_updates 表）
-wrangler d1 execute tanstack-d1-database --file db/migrations/002_create_tableau_mcp_updates.sql
-
-# 3. 创建 R2 bucket（用于图片上传等可选功能）
-wrangler r2 bucket create tanstack-task-images
-
-# 4. 本地开发
+# 本地开发
 npm install
-npm run dev                  # 启动本地开发服务器 (http://localhost:3000)
+npm run dev                  # http://localhost:3000
 
-# 5. 部署到 Cloudflare
-npm run build                # 执行 tsr generate && vite build
-npx wrangler deploy          # 部署到 Cloudflare Workers/Pages
+# 构建 + 部署到 Cloudflare Workers
+npm run build
+source ~/.config/cloudflare/env.sh
+export CLOUDFLARE_API_TOKEN="$CLOUDFLARE_API_KEY"   # wrangler 4.x 要求 token 变量
+npm run deploy              # = build + wrangler deploy
 ```
 
-> **提示**：`wrangler pages deploy public` 适用于静态资源部署，建议使用 `npx wrangler deploy` 进行完整部署。
+> 静态页在构建时把 `data/updates.json` 烘焙进前端，因此**数据更新后需重新 `wrangler deploy`** 才能让页面反映新内容（每天一更，频率足够）。D1 则是运行时实时数据。
 
 ---
 
 ## 📡 API 路由
 
-| 端点 | 方法 | 参数 | 返回 | 说明 |
-|------|------|------|------|------|
-| `/api/updates` | GET | `since` (date, 可选), `limit` (int, 默认 10) | `{ updates: [...] }` | 按日期倒序返回提交记录，`since` 用于分页 |
-| `/api/stats` | GET | 无 | `{ total_commits, daily_stats: [...] }` | 统计总提交数及每日提交趋势 |
-| `/api/sync` | POST | 无 | `{ success: true, count: N }` | 手动触发数据同步（需鉴权） |
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/updates` | GET | 实时从 D1 读取提交记录，`since`（日期，可选）、`limit`（默认 10）参数；按日期倒序 |
+| `/api/stats` | GET | 按日期分组的提交统计 |
+| `/api/sync` | POST | 触发 Worker 内部 `mainSync`（依赖构建时烘焙的 JSON，**不可靠，勿依赖**） |
 
-**示例响应**（`/api/updates?since=2026-07-20&limit=3`）：
+**`/api/updates` 示例响应：**
 
 ```json
 {
-  "updates": [
+  "success": true,
+  "meta": { "served_by": "v3-prod", "duration": 0.3 },
+  "results": [
     {
-      "commit_sha": "a1b2c3d",
-      "commit_date": "2026-07-22",
-      "pr_number": "553",
-      "title": "Enforce stale-content row limits",
-      "summary": "强制 stale-content 行数上限并加固 LUID 缓存",
-      "author": "Alon Siman Tov",
-      "files_changed": 3,
-      "additions": 124,
-      "deletions": 8,
-      "commit_url": "https://github.com/tableau/tableau-mcp/commit/a1b2c3d"
-    },
-    {
-      "commit_sha": "b2c3d4e",
-      "commit_date": "2026-07-21",
-      "pr_number": "473",
-      "title": "Stop get-stale-content-report...",
-      "summary": "修复 get-stale-content-report...",
-      "author": "Hua Wang",
-      "files_changed": 2,
-      "additions": 56,
-      "deletions": 15,
-      "commit_url": "https://github.com/tableau/tableau-mcp/commit/b2c3d4e"
+      "commit_sha": "e00fa5fc",
+      "commit_date": "2026-08-21",
+      "pr_number": "809",
+      "title": "@W-20005560: Undoing the consolidation of FFs for staging files in S3 (#809)",
+      "summary": "#809 撤销此前对 S3 暂存文件 feature flag 的合并（FF 拆分回各自独立开关）。",
+      "author": "Yogi",
+      "files_changed": 0,
+      "additions": 0,
+      "deletions": 0,
+      "commit_url": "https://github.com/tableau/tableau-mcp/commit/e00fa5fc"
     }
   ]
 }
@@ -122,190 +115,56 @@ npx wrangler deploy          # 部署到 Cloudflare Workers/Pages
 
 ---
 
-## 📂 项目结构说明
-
-```text
-├── src/
-│   ├── routes/
-│   │   ├── index.tsx             # 主页：Tableau MCP 每日更新时间线
-│   │   ├── api/
-│   │   │   ├── updates.ts        # 读取 D1 数据并返回 JSON
-│   │   └── stats.ts              # 统计信息（总提交数、每日趋势）
-│   └── lib/
-│       └── db-types.ts           # D1 表结构 TypeScript 定义
-├── data/
-│   └── updates.json            # 本地缓存的 GitHub 提交数据（每日同步生成）
-├── db/
-│   └── migrations/
-│       └── 002_create_tableau_mcp_updates.sql  # 监控表建表语句
-├── scripts/
-│   └── sync-to-d1.js           # 每日同步脚本（Node.js 执行）
-├── wrangler.jsonc            # Cloudflare 配置（D1、R2、Pages）
-└── vite.config.ts            # Vite + TanStack Start 配置
-```
-
----
-
-## 📦 部署步骤
-
-```bash
-# 1. 创建 D1 数据库（仅需一次）
-wrangler d1 create tanstack-d1-database
-
-# 2. 执行数据库迁移（创建 tableau_mcp_updates 表）
-wrangler d1 execute tanstack-d1-database --file db/migrations/002_create_tableau_mcp_updates.sql
-
-# 3. 创建 R2 bucket（用于图片上传等可选功能）
-wrangler r2 bucket create tanstack-task-images
-
-# 4. 本地开发
-npm install
-npm run dev                  # 启动 http://localhost:3000
-
-# 6. 强制推送到 GitHub 并触发部署
-git add .
-git commit -m "feat: 更新 README 为监控型网站详细说明"
-git push origin main
-```
-
-> **提示**：`wrangler deploy` 会自动构建并发布到 `tanstack-d1-app.guaguaailife.workers.dev`，用户可直接访问。
-
----
-
-## 📡 API 详情
-
-### `GET /api/updates`
-
-- **查询参数**：
-  - `since`: 起始日期（YYYY-MM-DD），可选
-  - `limit`: 返回条数（默认 10）
-- **响应示例**：
-  ```json
-  {
-    "updates": [
-      {
-        "commit_sha": "a1b2c3d",
-        "commit_date": "2026-07-22",
-        "pr_number": "553",
-        "title": "Enforce stale-content row limits",
-        "summary": "修复 get-stale-content-report...",
-        "author": "Alon Siman Tov",
-        "files_changed": 5,
-        "additions": 300,
-        "deletions": 15,
-        "commit_url": "https://github.com/tableau/tableau-mcp/commit/a1b2c3d"
-      }
-    ]
-  }
-}
-```
-
-### `GET /api/stats`
-
-- **返回示例**：
-  ```json
-  {
-    "total_commits": 38,
-    "daily_stats": [
-      { "commit_date": "2026-07-25", "daily_commits": 5 },
-      { "commit_date": "2026-07-24", "daily_commits": 7 },
-      { "commit_date": "2026-07-23", "daily_commits": 6 }
-    ]
-  }
-  ```
-
----
-
-## 🛠 开发指南
-
-```bash
-# 安装依赖
-npm install
-
-# 启动开发服务器（支持热更新）
-npm run dev
-
-# 构建生产版本
-npm run build                # 运行 "tsr generate && vite build"
-
-# 本地验证 D1 同步脚本
-node scripts/sync-to-d1.js
-```
-
----
-
 ## 🔄 自动同步机制
 
-### 方案一：GitHub Actions（推荐）
+数据管道由 **Hermes Agent 的 cron 任务**驱动（非 GitHub Actions / 非 Worker Cron Trigger）：
 
-```yaml
-# .github/workflows/daily-sync.yml
-name: Daily D1 Update Sync
-on:
-  schedule:
-    - cron: '15 7 * * *'   # 每天 07:15 UTC
-  workflow_dispatch:       # 支持手动触发
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: npm ci
-      - name: Sync to D1
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/sync-to-d1.js
+```
+官方 GitHub (tableau/tableau-mcp)
+  │ 07:00  fetch 阶段：git clone/pull 官方仓库，按 HEAD sha 判定新 commit
+  ▼
+raw-latest.json            （中间态，最近 25 条原始 commits）
+  │ 07:15  summarize 阶段：LLM 读 raw，生成中文 summary + explanation，
+  │       合并进 data/updates.json（按北京时间日期分组、倒序）
+  ▼
+data/updates.json          （本地草稿，含中文解读）
+  │ ① wrangler deploy  → 烘焙进静态页
+  │ ② sync-tableau-d1.py → 灌入 Cloudflare D1   ← 权威数据源
+  │ ③ verify-tableau-d1.py → 校验 D1 与 updates.json 一致
+  ▼
+Cloudflare D1  ⇄  网站（/api/updates 实时读 D1；主页用烘焙页）
 ```
 
-### 方案 B：Cloudflare Cron Trigger（更简洁）
+### 关键脚本（位于 `~/.hermes/scripts/`，不在本仓库）
 
-在 `wrangler.jsonc` 中添加：
+| 脚本 | 作用 |
+|------|------|
+| `sync-tableau-d1.py` | 用 Cloudflare D1 REST API 把 `updates.json` 灌入 D1。建表 → 清空 → 按 10 行/批 INSERT（D1 单语句参数上限 100）→ count 校验。幂等 |
+| `verify-tableau-d1.py` | 比对 D1 的 sha 集合 + count 与 `updates.json`，不一致非零退出 |
 
-```jsonc
-{
-  "triggers": {
-    "daily-sync": {
-      "schedule": "0 2 * * *"   // 每天 02:00 UTC
-    }
-  }
-}
+```bash
+# 同步 D1（需本地 Cloudflare 凭据）
+source ~/.config/cloudflare/env.sh
+export CF_ACCOUNT_ID=137c8f8351f90b7ab79fbc41ea2117f0
+python3 ~/.hermes/scripts/sync-tableau-d1.py
+python3 ~/.hermes/scripts/verify-tableau-d1.py   # 必须跑，确认 D1 == updates.json
 ```
 
-并在 `worker.ts` 中添加：
+> **为什么用 REST API 而不是直接 `wrangler d1 execute`？**
+> 本地 macOS 12.7 低于 workerd 要求的 13.5，即使加 `--remote`，`wrangler d1` 仍会尝试启动本地 workerd 而失败。D1 REST API 在服务端执行，无此限制。
 
-```ts
-import { syncUpdates } from './src/sync';
-
-export default {
-  async fetch(request, env) {
-    // ... existing fetch logic ...
-  },
-  async scheduled(controller: ScheduledController, env: any, ctx: ExecutionContext) {
-    await syncUpdates(env);
-  }
-} satisfies ExportedHandler;
-```
-
----
-
-## 📊 监控与运维
-
-- **监控点**：网站状态、API 响应时间、提交频率
-- **告警阈值**：设置 `warning_threshold`（5%）和 `critical_threshold`（10%）用于异常检测
-- **日志查看**：Cloudflare Workers → Logs → 查看 `sync-to-d1.js` 执行日志
-- **数据回溯**：通过 D1 查询历史提交，支持回溯分析
+> **为什么不直接用 Worker 的 `/api/sync` 或 02:00 Cron Trigger？**
+> 它们依赖构建时烘焙进 Worker 的 JSON bundle，实践中会静默让 D1 落后于静态页（页面看着是最新的，D1 却是空的/旧的）。REST 脚本 + verify 才是可观测、可靠的路径。
 
 ---
 
 ## 📌 注意事项
 
-- **凭证安全**：确保 `CLOUDFLARE_API_TOKEN` 仅在 CI/CD 环境中使用，勿硬编码在代码中。
-- **数据保留**：D1 免费额度为 1GB，若提交记录过多请定期清理或归档。
-- **权限控制**：生产环境建议通过 GitHub OAuth 或 API Token 进行身份验证。
+- **凭证**：Cloudflare 凭据在 `~/.config/cloudflare/env.sh`（chmod 600，仅本地，不进 git/记忆备份）。`CLOUDFLARE_API_KEY`（Global API Key）+ `CLOUDFLARE_EMAIL`。
+- **模型**：cron 的总结任务使用默认模型 `tencent/hy3:free` / `nous`（需支持工具调用）。勿硬写易下线的免费模型（如 `opencode-zen` 的 `deepseek-v4-flash-free` 已于 2026-08-21 停服）。
+- **数据一致性铁律**：每次同步后必须 `verify-tableau-d1.py` 通过，否则不视为成功。
+- **北京时间**：所有日期分组与展示统一用 Asia/Shanghai，避免时区不一致。
 
 ---
 
-✅ **完成**：项目已成功从「任务管理」转型为「监控型网站」，README 现已完整反映监控功能、技术选型与部署流程，数据同步已实现并可通过 GitHub Actions 或 Cloudflare Cron 实现每日自动更新。
+✅ 本面板每天自动从官方 Tableau MCP 仓库抓取更新，经中文解读后同步至 Cloudflare D1，并以 D1 为权威数据源对外提供查询。

@@ -2,11 +2,150 @@
   "meta": {
     "source": "github.com/tableau/tableau-mcp",
     "monitoring_since": "2026-06-01",
-    "last_sync": "2026-08-08",
-    "total_commits": 101,
+    "last_sync": "2026-08-21",
+    "total_commits": 109,
     "generated_by": "Hermes Agent Auto Explanation (2026-08-06 Beijing-time regroup)"
   },
   "updates": {
+    "2026-08-21": {
+      "count": 2,
+      "prs": [
+        "809",
+        "808"
+      ],
+      "commits": [
+        {
+          "sha": "e00fa5fc",
+          "pr": "809",
+          "title": "@W-20005560: Undoing the consolidation of FFs for staging files in S3  (#809)",
+          "summary": "#809 撤销此前对 S3 暂存文件 feature flag 的合并（FF 拆分回各自独立开关）。",
+          "explanation": "早前 #778 把 S3 暂存文件相关的多个 feature flag 合并成了一个（consolidate），但合并后可能带来行为回归或难以单独控制；本提交把它撤销（undo），让各 staging 文件的 FF 恢复为独立开关，便于按场景灰度与回滚。",
+          "author": "Yogi",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-20T17:07:45-07:00"
+        },
+        {
+          "sha": "bc32bfd7",
+          "pr": "808",
+          "title": "@W-23339839: Remove Download Workbook tool when feature flag is disabled (#808)",
+          "summary": "#808 在 feature flag 关闭时移除 Download Workbook 工具入口。",
+          "explanation": "当控制 Download Workbook 工具的 feature flag 处于禁用状态时，此前该工具仍可能出现在可用工具列表中；本提交在 FF 关闭时直接移除该工具，避免出现「声明可用但实际不可用」的接口，行为更一致、可预期。",
+          "author": "stephendeoca",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-20T16:54:53-07:00"
+        }
+      ]
+    },
+    "2026-08-18": {
+      "count": 2,
+      "prs": [
+        "781",
+        "778"
+      ],
+      "commits": [
+        {
+          "sha": "4e04b574",
+          "pr": "781",
+          "title": "@W-23865378: Add status code to MCP Site Settings error message (#781)",
+          "summary": "#781 在 MCP Site Settings 的错误提示中补充 HTTP 状态码，便于定位请求失败原因。",
+          "explanation": "该提交针对 Site Settings 相关的错误提示，增加了具体的状态码（status code）输出，使调用方在请求失败时能更快区分是客户端还是服务端问题（如 4xx/5xx）。属于错误可观测性的小幅改进，不改变既有功能逻辑。",
+          "author": "stephendeoca",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-17T16:43:25-07:00"
+        },
+        {
+          "sha": "c5d28eec",
+          "pr": "778",
+          "title": "@W-23865341 - consolidate the FFs for staging files in S3 (#778)",
+          "summary": "#778 将 S3 暂存文件相关的多个功能开关（feature flags）整合为统一配置。",
+          "explanation": "该提交把用于「S3 暂存文件（staging files in S3）」的若干功能开关收敛到一起，减少分散配置、降低维护复杂度。推测是把原本各自独立的开关逻辑合并为统一控制，便于后续整体开启或关闭该功能。（基于标题概述）",
+          "author": "Takashi Binns",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-17T14:27:16-04:00"
+        }
+      ]
+    },
+    "2026-08-17": {
+      "count": 1,
+      "prs": [
+        "758"
+      ],
+      "commits": [
+        {
+          "sha": "af334753",
+          "pr": "758",
+          "title": "@W-23850634 Add validate upload publish workbook tool (#758)",
+          "summary": "#758 新增用于校验「上传并发布工作簿」操作的 MCP 工具（validate upload publish workbook）。",
+          "explanation": "该提交新增名为 validate upload publish workbook 的 MCP 工具，用于在实际上传并发布工作簿之前进行校验，提前暴露参数、权限或内容方面的问题，降低正式发布失败的概率。属于对工作簿发布流程的健壮性补充。",
+          "author": "jarhun88",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-17T11:56:57-04:00"
+        }
+      ]
+    },
+    "2026-08-15": {
+      "count": 2,
+      "prs": [
+        "777",
+        "774"
+      ],
+      "commits": [
+        {
+          "sha": "233f4330",
+          "pr": "777",
+          "title": "@W-23865378: Wrap notification code with try / catch (#777)",
+          "summary": "#777 将通知相关代码用 try/catch 包裹，避免通知逻辑抛出的异常影响主流程。",
+          "explanation": "该提交把 MCP 应用中的通知（notification）代码块包裹进 try/catch，目的是让通知发送或回调过程中的异常被捕获并妥善处理，而不是向上抛出中断正常流程。这类防御式改动通常用于提高容错性——通知属于旁路功能，即使失败也不应影响主操作或导致整个工具报错。（基于标题概述）",
+          "author": "stephendeoca",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-14T13:51:27-07:00"
+        },
+        {
+          "sha": "614f9099",
+          "pr": "774",
+          "title": "@W-23854238 - Add download workbook tool (clean branch) (#774)",
+          "summary": "#774 新增 download workbook（下载工作簿）工具，支持在 MCP 对话中导出/下载 Tableau 工作簿。",
+          "explanation": "该提交为 tableau-mcp 新增了一个下载工作簿（download workbook）工具，用户在 MCP 对话中即可触发工作簿的导出/下载，扩展了工作簿相关的操作能力。标题中的 \"clean branch\" 提示这是一个在干净分支上重新提交的版本，通常意味着此前的提交分支存在问题被关闭后重开，改动本身是新增下载工作簿能力。（基于标题概述）",
+          "author": "Takashi Binns",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-14T13:54:02-04:00"
+        }
+      ]
+    },
+    "2026-08-11": {
+      "count": 1,
+      "prs": [
+        "748"
+      ],
+      "commits": [
+        {
+          "sha": "fdb1a5b4",
+          "pr": "748",
+          "title": "@W-23757367 Add ts-users kind + Desktop/Prep activity signal to license reclamation (#748)",
+          "summary": "#748 在许可证回收（license reclamation）逻辑中新增 ts-users 用户类型支持，并加入 Desktop/Prep 活动信号作为回收判定依据。",
+          "explanation": "该改动扩展了 tableau-mcp 的许可证回收功能：一方面新增 ts-users 这一用户类型（kind）的支持，使回收判定能覆盖到这类用户；另一方面引入 Tableau Desktop 与 Prep 的活动信号，只有这些产品未被活跃使用时其授权才应进入回收范围。整体意图是让许可证回收判定更精准，避免误回收仍在活跃使用的授权。（基于标题概述）",
+          "author": "Alon Siman Tov",
+          "files": null,
+          "additions": null,
+          "deletions": null,
+          "date": "2026-08-10T13:43:46-07:00"
+        }
+      ]
+    },
     "2026-08-08": {
       "count": 2,
       "prs": [
